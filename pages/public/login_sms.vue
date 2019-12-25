@@ -10,8 +10,7 @@
 				欢迎回来！
 			</view>
 			<view class="input-content">
-				<view class="input-item">
-					<text class="tit">手机号码</text>
+				<view class="number-input-item">
 					<input 
 						type="number" 
 						:value="mobile" 
@@ -20,13 +19,14 @@
 						data-key="mobile"
 						@input="inputChange"
 					/>
+					<button class="btn" type="primary" disabled>发送验证码</button>
 				</view>
 				<view class="input-item">
-					<text class="tit">密码</text>
+					<text class="tit">短信验证码</text>
 					<input 
 						type="mobile" 
 						value="" 
-						placeholder="8-18位不含特殊字符的数字、字母组合"
+						placeholder="填写6位短信验证码"
 						placeholder-class="input-empty"
 						maxlength="20"
 						password 
@@ -203,6 +203,33 @@
 			height: 50upx;
 			line-height: 56upx;
 			font-size: $font-sm+2upx;
+			color: $font-color-base;
+		}
+		input{
+			height: 60upx;
+			font-size: $font-base + 2upx;
+			color: $font-color-dark;
+			width: 100%;
+		}	
+	}
+
+	.number-input-item{
+		display:flex;
+		flex-direction: row;
+		align-items:center;
+		justify-content: center;
+		padding: 0 30upx;
+		background:$page-color-light;
+		height: 120upx;
+		border-radius: 4px;
+		margin-bottom: 50upx;
+		&:last-child{
+			margin-bottom: 0;
+		}
+		.btn{
+			height: 70upx;
+			line-height: 90upx;
+			font-size: $font-sm+1upx;
 			color: $font-color-base;
 		}
 		input{

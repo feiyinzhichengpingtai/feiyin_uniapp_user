@@ -4,25 +4,30 @@
 		<view class="back-btn yticon icon-zuojiantou-up" @click="navBack"></view>
 		<view class="right-top-sign"></view>
 		<!-- 设置白色背景防止软键盘把下部绝对定位元素顶上来盖住输入框等 -->
-		<view class="wrapper">
+		<view class="float_view">
 			<view class="left-top-sign">LOGIN</view>
-			<view class="welcome">
-				欢迎回来！
+			<view class="title_image_view">
+				<image src="../../static/errorImage.jpg"></image>
 			</view>
+		</view>
+		<view class="wrapper">
 			<view class="input-content">
 				<view class="input-item">
-					<text class="tit">手机号码</text>
-					<input 
-						type="number" 
-						:value="mobile" 
-						placeholder="请输入手机号码"
-						maxlength="11"
-						data-key="mobile"
-						@input="inputChange"
-					/>
+					<text class="tit">中国+86</text>
+					<view class="input-item-row">
+						<input
+							type="number" 
+							:value="mobile" 
+							placeholder="请输入手机号码"
+							maxlength="11"
+							data-key="mobile"
+							@input="inputChange"
+						/>
+						<button class="btn" type="primary">发送验证码</button>
+					</view>
 				</view>
 				<view class="input-item">
-					<text class="tit">密码</text>
+					<text class="tit">短信验证码</text>
 					<input 
 						type="mobile" 
 						value="" 
@@ -35,17 +40,49 @@
 						@confirm="toLogin"
 					/>
 				</view>
+				<view class="input-item">
+					<text class="tit">密码(8到20位字符，包含字母和数字)</text>
+					<input 
+						type="mobile" 
+						value="" 
+						placeholder=""
+						placeholder-class="input-empty"
+						maxlength="20"
+						password 
+						data-key="password"
+						@input="inputChange"
+						@confirm="toLogin"
+					/>
+				</view>
+				<view class="input-item">
+					<text class="tit">请再次输入密码</text>
+					<input 
+						type="mobile" 
+						value="" 
+						placeholder=""
+						placeholder-class="input-empty"
+						maxlength="20"
+						password 
+						data-key="password"
+						@input="inputChange"
+						@confirm="toLogin"
+					/>
+				</view>
 			</view>
-			<button class="confirm-btn" @click="toLogin" :disabled="logining">登录</button>
 			<view class="forget-section">
-				忘记密码?
+				已有账号，立即登录
 			</view>
-			<view class="forget-section">
-				新用户注册
+			<view class="agreement-section">
+				<checkbox-group>
+					<label>
+						<checkbox value="cb" checked="true" style="transform:scale(0.7)"/>已阅读并同意《用户使用协议》
+					</label>
+				</checkbox-group>
 			</view>
+			<button class="confirm-btn" @click="toLogin" :disabled="logining">确认注册</button>
 		</view>
 		<view class="register-section">
-			登录即代表您已同意我们的
+			登录即代表您已同意我们的<text @click="toRegist">商业服务</text>和
 			<text @click="toRegist">隐私政策条例</text>
 		</view>
 	</view>
@@ -175,13 +212,15 @@
 		border-radius: 50%;
 		padding: 180upx;
 	}
-	.welcome{
-		position:relative;
-		left: 50upx;
-		top: -90upx;
-		font-size: 46upx;
-		color: #555;
-		text-shadow: 1px 0px 1px rgba(0,0,0,.3);
+	.title_image_view{
+		display: flex;
+		align-items: center; 
+		justify-content: center;
+		padding: 0 60upx;
+		image{
+			height : 150upx;
+			width: 150upx;
+		}
 	}
 	.input-content{
 		padding: 0 60upx;
@@ -196,9 +235,6 @@
 		height: 120upx;
 		border-radius: 4px;
 		margin-bottom: 50upx;
-		&:last-child{
-			margin-bottom: 0;
-		}
 		.tit{
 			height: 50upx;
 			line-height: 56upx;
@@ -210,7 +246,21 @@
 			font-size: $font-base + 2upx;
 			color: $font-color-dark;
 			width: 100%;
-		}	
+		}
+			
+	}
+
+	.input-item-row{
+		display: flex;
+		flex-direction: row;
+		align-items:center;
+	}
+
+	.btn{
+		height: 50upx;
+		line-height: 90upx;
+		font-size: $font-sm+1upx;
+		color: $font-color-base;
 	}
 
 	.confirm-btn{
@@ -227,10 +277,18 @@
 		}
 	}
 	.forget-section{
+		display: flex;
+		justify-content: flex-end;
 		font-size: $font-sm+2upx;
 		color: $font-color-spec;
 		text-align: center;
-		margin-top: 40upx;
+		margin-top: 20upx;
+		padding: 0 60upx;
+	}
+	
+	.agreement-section{
+		padding: 0 60upx;
+		margin-top: 20upx;
 	}
 	.register-section{
 		position:absolute;
@@ -245,4 +303,5 @@
 			margin-left: 10upx;
 		}
 	}
+	
 </style>
