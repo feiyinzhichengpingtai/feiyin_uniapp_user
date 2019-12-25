@@ -8,8 +8,8 @@
 					<image class="portrait" :src="userInfo.portrait || '/static/missing-face.png'"></image>
 				</view>
 				<view class="info-box">
-					<text class="username">用户名:</text>
-					<text class="username">{{userInfo.nickname || '游客'}}</text>
+					<text class="login" @click="dologin()">{{login}}</text>
+					<text class="register" @click="doregister()">{{register}}</text>
 				</view>
 			</view>
 		<!-- 	<view class="vip-card-box">
@@ -95,6 +95,7 @@
 			    <list-cell icon="icon-share" iconColor="#9789f7" title="问题反馈">
 				</list-cell>
 			</view>
+			<button class="confirm-btn" @click="toLogin" :disabled="logining" v-if="isshow">退出登录</button>
 		</view>
 			
 		
@@ -112,12 +113,22 @@
 		},
 		data(){
 			return {
+				isshow:true,
+				login:'登录/',
+				register:'注册',
 				coverTransform: 'translateY(0px)',
 				coverTransition: '0s',
 				moving: false,
 			}
 		},
 		onLoad(){
+	/* 		if(1){
+				this.login='用户名:'
+			}
+			if(1){
+				
+			}
+			 */
 		},
 		// #ifndef MP
 		onNavigationBarButtonTap(e) {
@@ -138,12 +149,28 @@
 				})
 			}
 		},
+	
 		// #endif
         computed: {
 			...mapState(['hasLogin','userInfo'])
 		},
         methods: {
-
+	       dologin(){
+			   if(this.login=="登录/"){
+				 uni.navigateTo({
+					url: '/pages/notice/notice'
+				})
+			   }
+			  
+		    },
+			doregister(){
+				if(this.register=="注册"){
+				 uni.navigateTo({
+					 url: '/pages/notice/notice'
+				 })
+				}
+			
+			 },
 			/**
 			 * 统一跳转接口,拦截未登录路由
 			 * navigator标签现在默认没有转场动画，所以用view
@@ -372,6 +399,19 @@
 				margin-right: 20upx;
 				border-radius: 10upx;
 			}
+		}
+	}
+	.confirm-btn{
+		width: 630upx;
+		height: 76upx;
+		line-height: 76upx;
+		border-radius: 50px;
+		margin-top: 70upx;
+		background: $uni-color-primary;
+		color: #fff;
+		font-size: $font-lg;
+		&:after{
+			border-radius: 100px;
 		}
 	}
 	
