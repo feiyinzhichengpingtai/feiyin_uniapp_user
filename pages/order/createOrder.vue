@@ -23,7 +23,7 @@
 				<text class="name">西城小店铺</text>
 			</view>
 			<!-- 商品列表 -->
-			<view class="g-item">
+			<!-- <view class="g-item">
 				<image src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=756705744,3505936868&fm=11&gp=0.jpg"></image>
 				<view class="right">
 					<text class="title clamp">古黛妃 短袖t恤女夏装2019新款</text>
@@ -33,14 +33,16 @@
 						<text class="number">x 1</text>
 					</view>
 				</view>
-			</view>
+			</view> -->
 			<view class="g-item">
 				<image src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1620020012,789258862&fm=26&gp=0.jpg"></image>
 				<view class="right">
 					<text class="title clamp">韩版于是洞洞拖鞋 夏季浴室防滑简约居家【新人专享，限选意见】</text>
-					<text class="spec">春装款 L</text>
+					<text class="spec">春装款</text>
 					<view class="price-box">
 						<text class="price">￥17.8</text>
+					</view>
+					<view class="price-box">
 						<text class="number">x 1</text>
 					</view>
 				</view>
@@ -49,41 +51,55 @@
 
 		<!-- 优惠明细 -->
 		<view class="yt-list">
-			<view class="yt-list-cell b-b" @click="toggleMask('show')">
-				<view class="cell-icon">
+			<view class="yt-list-cell b-b" >
+				<!-- <view class="cell-icon">
 					券
 				</view>
-				<text class="cell-tit clamp">优惠券</text>
-				<text class="cell-tip active">
+				
+				<text class="cell-tit clamp">优惠券</text> -->
+				<text class="cell-tit clamp">购买数量</text>
+				<!-- <text class="cell-tip active">
 					选择优惠券
-				</text>
+				</text> -->
+				<uni-number-box
+				></uni-number-box>
 				<text class="cell-more wanjia wanjia-gengduo-d"></text>
 			</view>
-			<view class="yt-list-cell b-b">
-				<view class="cell-icon hb">
+			<view class="yt-list-cell b-b" @click="toggleMask('show')">
+				<!-- <view class="cell-icon hb">
 					减
 				</view>
 				<text class="cell-tit clamp">商家促销</text>
-				<text class="cell-tip disabled">暂无可用优惠</text>
+				<text class="cell-tip disabled">暂无可用优惠</text> -->
+				<text class="cell-tit clamp">配送方式</text>
+				<text class="cell-tip active">
+					选择配送方式
+				</text> 
 			</view>
 		</view>
 		<!-- 金额明细 -->
 		<view class="yt-list">
-			<view class="yt-list-cell b-b">
+			<!-- <view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">商品金额</text>
 				<text class="cell-tip">￥179.88</text>
-			</view>
+			</view> -->
 			<view class="yt-list-cell b-b">
-				<text class="cell-tit clamp">优惠金额</text>
-				<text class="cell-tip red">-￥35</text>
+				<text class="cell-tit clamp">开具发票</text>
+				<text class="cell-tip active">
+					本次不开具发票
+				</text> 
+				<!-- <text class="cell-tit clamp">优惠金额</text>
+				<text class="cell-tip red">-￥35</text> -->
 			</view>
-			<view class="yt-list-cell b-b">
+			<!-- <view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">运费</text>
 				<text class="cell-tip">免运费</text>
-			</view>
+			</view> -->
 			<view class="yt-list-cell desc-cell">
-				<text class="cell-tit clamp">备注</text>
-				<input class="desc" type="text" v-model="desc" placeholder="请填写备注信息" placeholder-class="placeholder" />
+				<text class="cell-tit clamp">留言</text>
+				<input class="desc" type="text" v-model="desc" placeholder="选填,请先和商家协商一致" placeholder-class="placeholder" />
+
+				
 			</view>
 		</view>
 		
@@ -124,7 +140,11 @@
 </template>
 
 <script>
+	import uniNumberBox from '@/components/uni-number-boxs.vue'
 	export default {
+		components:{
+			uniNumberBox
+		},
 		data() {
 			return {
 				maskState: 0, //优惠券面板显示状态
