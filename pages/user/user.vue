@@ -166,7 +166,7 @@
 			doregister(){
 				if(this.register=="注册"){
 				 uni.navigateTo({
-					 url: '/pages/notice/notice'
+					 url: '/pages/logistics/logistics'
 				 })
 				}
 			
