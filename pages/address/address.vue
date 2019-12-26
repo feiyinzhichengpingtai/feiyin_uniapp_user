@@ -11,7 +11,7 @@
 					<text class="mobile">{{item.mobile}}</text>
 				</view>
 			</view>
-			<text class="yticon icon-bianji" @click.stop="addAddress('edit', item)"></text>
+			<text class="yticon icon-bianji" @click.stop="alterAddress('edit', item)"></text>
 		</view>
 		<text style="display:block;padding: 16upx 30upx 10upx;lihe-height: 1.6;color: #fa436a;font-size: 24upx;">
 			重要：添加和修改地址回调仅增加了一条数据做演示，实际开发中将回调改为请求后端接口刷新一下列表即可
@@ -61,6 +61,12 @@
 			addAddress(type, item){
 				uni.navigateTo({
 					url: `/pages/address/addressManage?type=${type}&data=${JSON.stringify(item)}`
+				})
+			},
+			//修改地址
+			alterAddress(type, item){
+				uni.navigateTo({
+					url: '/pages/address/addressAlter'
 				})
 			},
 			//添加或修改成功之后回调

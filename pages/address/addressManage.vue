@@ -1,29 +1,34 @@
 <template>
 	<view class="content">
 		<view class="row b-b">
-			<text class="tit">联系人</text>
+			<text class="tit">收货人:</text>
 			<input class="input" type="text" v-model="addressData.name" placeholder="收货人姓名" placeholder-class="placeholder" />
 		</view>
 		<view class="row b-b">
-			<text class="tit">手机号</text>
+			<text class="tit">手机号码：</text>
 			<input class="input" type="number" v-model="addressData.mobile" placeholder="收货人手机号码" placeholder-class="placeholder" />
 		</view>
 		<view class="row b-b">
-			<text class="tit">地址</text>
+			<text class="tit">所在地区：</text>
 			<text @click="chooseLocation" class="input">
 				{{addressData.addressName}}
 			</text>
 			<text class="yticon icon-shouhuodizhi"></text>
 		</view>
 		<view class="row b-b"> 
-			<text class="tit">门牌号</text>
+			<text class="tit">详细地址：</text>
 			<input class="input" type="text" v-model="addressData.area" placeholder="楼号、门牌" placeholder-class="placeholder" />
 		</view>
 		
 		<view class="row default-row">
-			<text class="tit">设为默认</text>
+			<text class="tit">设为默认地址：</text>
 			<switch :checked="addressData.defaule" color="#fa436a" @change="switchChange" />
 		</view>
+		<view class="row default-row">
+			<text class="tit">标签：</text>
+			
+		</view>
+		
 		<button class="add-btn" @click="confirm">提交</button>
 	</view>
 </template>
@@ -116,7 +121,7 @@
 		
 		.tit{
 			flex-shrink: 0;
-			width: 120upx;
+			width: 150upx;
 			font-size: 30upx;
 			color: $font-color-dark;
 		}
