@@ -4,13 +4,13 @@
 		<view class="back-btn yticon icon-zuojiantou-up" @click="navBack"></view>
 		<view class="right-top-sign"></view>
 		<!-- 设置白色背景防止软键盘把下部绝对定位元素顶上来盖住输入框等 -->
-		<view class="float_view">
-			<view class="left-top-sign">LOGIN</view>
-			<view class="title_image_view">
-				<image src="../../static/errorImage.jpg"></image>
-			</view>
-		</view>
 		<view class="wrapper">
+			<view class="left-top-sign">LOGIN</view>
+			<view class="welcome">
+				<view class= "photo">
+					<image src="../../static/errorImage.jpg"></image>
+				</view>
+			</view>
 			<view class="input-content">
 				<view class="input-item">
 					<text class="tit">中国+86</text>
@@ -23,7 +23,7 @@
 							data-key="mobile"
 							@input="inputChange"
 						/>
-						<button class="btn" type="primary">发送验证码</button>
+						<button class="mini-btn" type="primary">发送验证码</button>
 					</view>
 				</view>
 				<view class="input-item">
@@ -178,6 +178,26 @@
 		color: $page-color-base;
 		position:relative;
 		left: -16upx;
+	}
+	.welcome{
+		position:relative;
+		left: 0upx;
+		top: -150upx;
+		font-size: 46upx;
+		color: #555;
+		text-shadow: 1px 0px 1px rgba(0,0,0,.3);
+		
+	}
+	.photo{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		image{
+			text-align: center;
+			width: 250upx;
+			height: 250upx;
+			
+		}
 	}
 	.right-top-sign{
 		position:absolute;

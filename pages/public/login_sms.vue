@@ -19,7 +19,7 @@
 						data-key="mobile"
 						@input="inputChange"
 					/>
-					<button class="btn" type="primary" disabled>发送验证码</button>
+					<button class="mini-btn" type="primary" loading="true">发送验证码</button>
 				</view>
 				<view class="input-item">
 					<text class="tit">短信验证码</text>
@@ -225,12 +225,6 @@
 		margin-bottom: 50upx;
 		&:last-child{
 			margin-bottom: 0;
-		}
-		.btn{
-			height: 70upx;
-			line-height: 90upx;
-			font-size: $font-sm+1upx;
-			color: $font-color-base;
 		}
 		input{
 			height: 60upx;
