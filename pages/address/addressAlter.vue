@@ -11,13 +11,13 @@
 		<view class="row b-b">
 			<text class="tit">所在地区：</text>
 			<text @click="chooseLocation" class="input">
-				{{addressData.addressName}}
+				{{addressData.label}}
 			</text>
-			<text class="yticon icon-shouhuodizhi"></text>
+			<!-- <text class="yticon icon-shouhuodizhi"></text> -->
 		</view>
 		<view class="row b-b"> 
 			<text class="tit">详细地址：</text>
-			<input class="input" type="text" v-model="addressData.area" placeholder="楼号、门牌" placeholder-class="placeholder" />
+			<input class="input" type="text" v-model="addressData.area" placeholder="请输入详细地址" placeholder-class="placeholder" />
 		</view>
 		
 		<view class="row default-row">
@@ -30,17 +30,25 @@
 		</view>
 		<button class="del-btn" @click="del">删除</button>
 		<button class="add-btn" @click="confirm">提交</button>
+		<mpvue-city-picker :themeColor="themeColor" ref="mpvueCityPicker" :pickerValueDefault="cityPickerValue" @onCancel="onCancel" @onConfirm="onConfirm"></mpvue-city-picker>
 	</view>
 </template>
 
 <script>
+	import mpvueCityPicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue'
+		
 	export default {
+		components: {
+			mpvueCityPicker
+		},
 		data() {
 			return {
+				themeColor: '#007AFF',
+				cityPickerValue: [0, 0, 1],
 				addressData: {
 					name: '',
 					mobile: '',
-					addressName: '在地图选择',
+					label: '请点击选择地址',
 					address: '',
 					area: '',
 					default: false
@@ -66,14 +74,21 @@
 			
 			//地图选择地址
 			chooseLocation(){
-				uni.chooseLocation({
-					success: (data)=> {
-						this.addressData.addressName = data.name;
-						this.addressData.address = data.name;
-					}
-				})
+				this.$refs.mpvueCityPicker.show()
+				// uni.chooseLocation({
+				// 	success: (data)=> {
+				// 		this.addressData.addressName = data.name;
+				// 		this.addressData.address = data.name;
+				// 	}
+				// })
 			},
-			
+			onCancel(e) {
+				console.log(e)
+			},
+			onConfirm(e) {
+				this.addressData = e;
+				this.cityPickerValue = e.value;
+			},
 			//提交
 			confirm(){
 				let data = this.addressData;
@@ -86,7 +101,7 @@
 					return;
 				}
 				if(!data.address){
-					this.$api.msg('请在地图选择所在位置');
+					// this.$api.msg('请在地图选择所在位置');
 					return;
 				}
 				if(!data.area){
