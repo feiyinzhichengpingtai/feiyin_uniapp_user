@@ -63,9 +63,19 @@
 							件商品 实付款
 							<text class="price">143.7</text>
 						</view>
-						<view class="action-box b-t" v-if="item.state != 9">
+						<view class="action-box b-t" v-if="item.state === 1">
 							<button class="action-btn" @click="cancelOrder(item)">取消订单</button>
-							<button class="action-btn recom">立即支付</button>
+							<button class="action-btn recom" @click="payOrder(item)">付款</button>
+						</view>
+						<view class="action-box b-t" v-if="item.state === 2">
+							<button class="action-btn" @click="applicate(item)">申请开票</button>
+							<button class="action-btn" @click="check(item)">查看物流</button>
+							<button class="action-btn recom" @click="confirmOrder(item)">确认收货</button>
+						</view>
+						<view class="action-box b-t" v-if="item.state === 3">
+							<button class="action-btn" @click="applicate(item)">申请开票</button>
+							<button class="action-btn" @click="check(item)">查看物流</button>
+							<button class="action-btn recom" @click="confirmOrder(item)">确认收货</button>
 						</view>
 					</view>
 					 
@@ -103,22 +113,22 @@
 					},
 					{
 						state: 2,
-						text: '待收货',
+						text: '待发货',
 						loadingType: 'more',
 						orderList: []
 					},
 					{
 						state: 3,
-						text: '待评价',
+						text: '待收货',
 						loadingType: 'more',
 						orderList: []
 					},
-					{
+					/* {
 						state: 4,
 						text: '售后',
 						loadingType: 'more',
 						orderList: []
-					}
+					} */
 				],
 			};
 		},
@@ -221,7 +231,56 @@
 					uni.hideLoading();
 				}, 600)
 			},
-
+			//支付订单
+			payOrder(item){
+				uni.showLoading({
+					title: '请稍后'
+				})
+				setTimeout(()=>{
+					let {stateTip, stateTipColor} = this.orderStateExp(2);
+					item = Object.assign(item, {
+						state: 2,
+						stateTip, 
+						stateTipColor
+					})
+					
+					//支付订单后删除待付款中该项
+					let list = this.navList[1].orderList;
+					let index = list.findIndex(val=>val.id === item.id);
+					index !== -1 && list.splice(index, 1);
+					
+					uni.hideLoading();
+				}, 600)
+			},
+			//申请开票
+			applicate(){
+				
+			},
+			//查看物流
+			check(){
+				
+			},
+			//确认收货
+			confirmOrder(item){
+				uni.showLoading({
+					title: '请稍后'
+				})
+				setTimeout(()=>{
+					let {stateTip, stateTipColor} = this.orderStateExp(8);
+					item = Object.assign(item, {
+						state: 8,
+						stateTip, 
+						stateTipColor
+					})
+					
+					//收货后删除待收货中该项
+					let list = this.navList[3].orderList;
+					let index = list.findIndex(val=>val.id === item.id);
+					index !== -1 && list.splice(index, 1);
+					
+					uni.hideLoading();
+				}, 600)
+			},
 			//订单状态文字和颜色
 			orderStateExp(state){
 				let stateTip = '',
@@ -231,8 +290,12 @@
 						stateTip = '待付款'; break;
 					case 2:
 						stateTip = '待发货'; break;
+					case 3:
+						stateTip = '待收货'; break;
+					case 8:
+						stateTip = '交易成功'; break;
 					case 9:
-						stateTip = '订单已关闭'; 
+						stateTip = '交易关闭'; 
 						stateTipColor = '#909399';
 						break;
 						
