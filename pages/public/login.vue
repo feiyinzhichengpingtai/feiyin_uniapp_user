@@ -36,11 +36,14 @@
 					/>
 				</view>
 			</view>
-			<button class="confirm-btn" @click="toLogin" :disabled="logining">登录</button>
+			<button class="confirm-btn" @click="" :disabled="logining">登录</button>
 			<view class="forget-section">
 				忘记密码?
 			</view>
-			<view class="forget-section">
+			<view class="forget-section" @click="tologinquick">
+				快捷登录
+			</view>
+			<view class="forget-section" @click="toRegist">
 				新用户注册
 			</view>
 		</view>
@@ -78,6 +81,15 @@
 			},
 			toRegist(){
 				this.$api.msg('去注册');
+				uni.navigateTo({
+					url: '/pages/public/login'
+				});
+			},
+			tologinquick(){
+				this.$api.msg('快捷登录');
+				uni.navigateTo({
+					url: '/pages/public/login_sms'
+				});
 			},
 			async toLogin(){
 				this.logining = true;

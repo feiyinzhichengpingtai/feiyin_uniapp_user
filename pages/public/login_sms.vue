@@ -40,7 +40,7 @@
 			<view class="forget-section">
 				忘记密码?
 			</view>
-			<view class="forget-section">
+			<view class="forget-section" @click="toRegist">
 				新用户注册
 			</view>
 		</view>
@@ -78,6 +78,9 @@
 			},
 			toRegist(){
 				this.$api.msg('去注册');
+				uni.navigateTo({
+					url: '/pages/public/register'
+				});
 			},
 			async toLogin(){
 				this.logining = true;

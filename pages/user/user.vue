@@ -157,8 +157,8 @@
         methods: {
 	       dologin(){
 			   if(this.login=="登录/"){
-				 uni.navigateTo({
-					url: '/pages/notice/notice'
+				uni.navigateTo({
+					url: '/pages/public/login'
 				})
 			   }
 			  
@@ -166,7 +166,7 @@
 			doregister(){
 				if(this.register=="注册"){
 				 uni.navigateTo({
-					 url: '/pages/logistics/logistics'
+					 url: '/pages/public/register'
 				 })
 				}
 			
