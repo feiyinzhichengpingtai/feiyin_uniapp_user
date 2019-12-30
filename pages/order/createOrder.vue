@@ -49,8 +49,27 @@
 			</view>
 		</view>
 
-		<!-- 优惠明细 -->
+		<!-- 配送方式 -->
 		<view class="yt-list">
+<<<<<<< HEAD
+			<view class="yt-list-cell b-b" @click="toggleMask('show')">
+				<view class="cell-icon">
+					送
+				</view>
+				<text class="cell-tit clamp">配送方式</text>
+				<text class="cell-tip active">
+					{{giveType}}
+				</text>
+				<text class="cell-more wanjia wanjia-gengduo-d"></text>
+			</view>
+			<!-- <view class="yt-list-cell b-b">
+				<view class="cell-icon hb">
+					减
+				</view>
+				<text class="cell-tit clamp">商家促销</text>
+				<text class="cell-tip disabled">暂无可用优惠</text>
+			</view> -->
+=======
 			<view class="yt-list-cell b-b" >
 				<!-- <view class="cell-icon">
 					券
@@ -76,12 +95,27 @@
 					选择配送方式
 				</text> 
 			</view>
+>>>>>>> 7751f55b2e65d4a3d946281fec872a80844cbacd
 		</view>
 		<!-- 金额明细 -->
 		<view class="yt-list">
 			<!-- <view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">商品金额</text>
 				<text class="cell-tip">￥179.88</text>
+<<<<<<< HEAD
+			</view>
+			<!-- <view class="yt-list-cell b-b">
+				<text class="cell-tit clamp">优惠金额</text>
+				<text class="cell-tip red">-￥35</text>
+			</view> -->
+			<view class="yt-list-cell b-b">
+				<text class="cell-tit clamp">运费</text>
+				<text class="cell-tip">{{transExpence}}</text>
+			</view>
+			<view class="yt-list-cell desc-cell">
+				<text class="cell-tit clamp">买家留言</text>
+				<input class="desc" type="text" v-model="desc" placeholder="请填写留言信息" placeholder-class="placeholder" />
+=======
 			</view> -->
 			<view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">开具发票</text>
@@ -100,24 +134,55 @@
 				<input class="desc" type="text" v-model="desc" placeholder="选填,请先和商家协商一致" placeholder-class="placeholder" />
 
 				
+>>>>>>> 7751f55b2e65d4a3d946281fec872a80844cbacd
 			</view>
 		</view>
-		
+		<!-- 支付方式 -->
+		<view class="yt-list-cell b-b" @click="toggleMask1('show')">
+			<view class="cell-icon">
+				付
+			</view>
+			<text class="cell-tit clamp">支付方式</text>
+				<view class="cell-tip active">
+					{{payType1}}
+				</view>
+				<!-- <view class="uni-input">{{items1[index].name}}</view> -->
+			<text class="cell-more wanjia wanjia-gengduo-d"></text>
+		</view>
+		<view class="yt-list-cell b-b">
+			<view class="cell-icon">
+				票
+			</view>
+			<text class="cell-tit clamp">开具发票</text>
+			<navigator url="../../pages/receipt/openReceipt" hover-class="navigator-hover">
+				<button type="default">></button>
+			</navigator>
+		</view>
 		<!-- 底部 -->
 		<view class="footer">
 			<view class="price-content">
-				<text>实付款</text>
+				<text>合计</text>
 				<text class="price-tip">￥</text>
 				<text class="price">475</text>
 			</view>
 			<text class="submit" @click="submit">提交订单</text>
 		</view>
 		
-		<!-- 优惠券面板 -->
-		<view class="mask" :class="maskState===0 ? 'none' : maskState===1 ? 'show' : ''" @click="toggleMask">
+		<!-- 配送方式面板 -->
+		<view class="mask" :class="maskState===0 ? 'none' : maskState===1 ? 'show' : ''">
 			<view class="mask-content" @click.stop.prevent="stopPrevent">
+				<view class="uni-list">
+					<radio-group @change="radioChange">
+						<label class="uni-list-cell uni-list-cell-pd" v-for="(item, index) in items" :key="item.value" @click="confirmGive(item.name,item.value)">
+							<view>
+								<radio :value="item.value" :checked="index === current" />
+							</view>
+							<view>{{item.name}}</view>
+						</label>
+					</radio-group>
+				</view>
 				<!-- 优惠券页面，仿mt -->
-				<view class="coupon-item" v-for="(item,index) in couponList" :key="index">
+				<!-- <view class="coupon-item" v-for="(item,index) in couponList" :key="index">
 					<view class="con">
 						<view class="left">
 							<text class="title">{{item.title}}</text>
@@ -132,10 +197,25 @@
 						<view class="circle r"></view>
 					</view>
 					<text class="tips">限新用户使用</text>
+				</view> -->
+			</view>
+		</view>
+		<!-- 支付方式面板-->
+		<view class="mask" :class="maskState1===0 ? 'none' : maskState1===2 ? 'show' : ''" >
+			<view class="mask-content" @click.stop.prevent="stopPrevent">
+				<view class="uni-list">
+					<radio-group @change="radioChange">
+						<label class="uni-list-cell uni-list-cell-pd" v-for="(item, index) in items1" :key="item.value" @click="confirmPay(item.name)">
+							<view>
+								<radio :value="item.value" :checked="index === current" />
+							</view>
+							<view>{{item.name}}</view>
+						</label>
+					</radio-group>																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																									
 				</view>
 			</view>
 		</view>
-
+		
 	</view>
 </template>
 
@@ -147,10 +227,35 @@
 		},
 		data() {
 			return {
-				maskState: 0, //优惠券面板显示状态
+				payType1:"微信支付",
+				giveType:"普通配送(快递费10元)",
+				transExpence:10,
+				items: [{
+						value: '1',
+						name: '普通配送(快递费10元)'
+					},
+					{
+						value: '2',
+						name: '自提',
+						checked: 'true'
+					},
+				],
+				items1: [{
+						value: 'wechart',
+						name: '微信支付'
+					},
+					{
+						value: 'spdbCard',
+						name: '浦发卡支付',
+						checked: 'true'
+					},
+				],
+				current: 0,
+				maskState: 0, //配送方式面板显示状态
+				maskState1: 0,//支付方式面板显示状态
 				desc: '', //备注
 				payType: 1, //1微信 2支付宝
-				couponList: [
+				/* couponList: [
 					{
 						title: '新用户专享优惠券',
 						price: 5,
@@ -159,11 +264,11 @@
 						title: '庆五一发一波优惠券',
 						price: 10,
 					},
-					{
+					 {
 						title: '优惠券优惠券优惠券优惠券',
 						price: 15,
-					}
-				],
+					} 
+				], */
 				addressData: {
 					name: '许小星',
 					mobile: '13853989563',
@@ -180,6 +285,29 @@
 			//console.log(data);
 		},
 		methods: {
+			confirmGive(value,index){
+				console.log(value);
+				this.giveType=value;
+				this.maskState = 0;
+				if(index=="1"){
+					this.transExpence=10;
+				}else{
+					this.transExpence=0;
+				}
+			},
+			confirmPay(value){
+				console.log(value);
+				this.payType1=value;
+				this.maskState1 = 0;
+			},
+			radioChange(evt) {
+				for (let i = 0; i < this.items.length; i++) {
+					if (this.items[i].value === evt.target.value) {
+						this.current = i;
+						break;
+					}
+				}
+			},
 			//显示优惠券面板
 			toggleMask(type){
 				let timer = type === 'show' ? 10 : 300;
@@ -187,6 +315,14 @@
 				this.maskState = 2;
 				setTimeout(()=>{
 					this.maskState = state;
+				}, timer)
+			},
+			toggleMask1(type){
+				let timer = type === 'show' ? 10 : 300;
+				let	state = type === 'show' ? 2 : 0;
+				this.maskState1 = 3;
+				setTimeout(()=>{
+					this.maskState1 = state;
 				}, timer)
 			},
 			numberChange(data) {

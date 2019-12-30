@@ -19,7 +19,7 @@
 			<text class="tit">抬头类型</text>
 			<xfl-select
 			class="input"
-			:list="list"
+			:list="list1"
 			:initValue="'个人或事业单位'"
 			:showItemNum="2" 
 			:isCanInput="false"  
@@ -32,11 +32,11 @@
 		</view>
 		<view class="row default-row">
 			<text class="tit">发票抬头</text>
-			<input class="input" type="text" v-model="addressData.mobile" placeholder="上海xxx公司" placeholder-class="placeholder" />
+			<input class="input" type="text" v-model="addressData.paperTitle" placeholder="上海xxx公司" placeholder-class="placeholder" />
 		</view>
 		<view class="row default-row"> 
 			<text class="tit">纳税人编号</text>
-			<input class="input" type="text" v-model="addressData.area" placeholder="4423422122Y" placeholder-class="placeholder" />
+			<input class="input" type="text" v-model="addressData.TaxPayerId" placeholder="4423422122Y" placeholder-class="placeholder" />
 		</view>
 		
 		<view class="row default-row">
@@ -59,6 +59,11 @@
 			<text class="tit">设为默认发票信息</text>
 			<switch :checked="addressData.defaule" color="#fa436a" @change="switchChange" />
 		</view>
+		<view class="uni-btn-v">
+			<navigator url="../../pages/order/createOrder" hover-class="navigator-hover">
+				<button type="default">本次不开具发票，继续下单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;></button>
+			</navigator>
+		</view>
 		<button class="add-btn" @click="confirm">完成</button>
 	</view>
 </template>
@@ -73,9 +78,13 @@
 					'电子发票',
 					'纸质发票',
 				],
+				list1: [
+					'个人或事业单位',
+					'企业',
+				],
 			}
 		},
-		onLoad(option){
+		/* onLoad(option){
 			let title = '开具发票';
 			if(option.type==='edit'){
 				title = '编辑收货地址'
@@ -86,7 +95,7 @@
 			uni.setNavigationBarTitle({
 				title
 			})
-		},
+		}, */
 		back() {
 			uni.navigateBack({
 				delta: 1
@@ -110,19 +119,11 @@
 			//提交
 			confirm(){
 				let data = this.addressData;
-				if(!data.name){
-					this.$api.msg('请选择发票类型');
-					return;
-				}
-				if(!data.name){
-					this.$api.msg('请选择抬头类型');
-					return;
-				}
-				if(!data.address){
+				if(!data.paperTitle){
 					this.$api.msg('请填写发票抬头');
 					return;
 				}
-				if(!data.area){
+				if(!data.TaxPayerId){
 					this.$api.msg('请填写纳税人编号');
 					return;
 				}
