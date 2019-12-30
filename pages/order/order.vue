@@ -34,6 +34,11 @@
 								class="del-btn yticon icon-iconfontshanchu1"
 								@click="deleteOrder(index)"
 							></text>
+							<text
+								v-if="item.state===8" 
+								class="del-btn yticon icon-iconfontshanchu1"
+								@click="deleteOrder(index)"
+							></text>
 						</view>
 						
 						<scroll-view v-if="item.goodsList.length > 1">
@@ -296,16 +301,16 @@
 					stateTipColor = '#fa436a';
 				switch(+state){
 					case 1:
-						stateTip = '待付款'; break;
+						stateTip = '等待买家付款'; break;
 					case 2:
-						stateTip = '待发货'; break;
+						stateTip = '等待卖家发货'; break;
 					case 3:
-						stateTip = '待收货'; break;
+						stateTip = '卖家已发货'; break;
 					case 8:
 						stateTip = '交易成功'; break;
 					case 9:
 						stateTip = '交易关闭'; 
-						stateTipColor = '#909399';
+						// stateTipColor = '#909399';
 						break;
 						
 					//更多自定义
