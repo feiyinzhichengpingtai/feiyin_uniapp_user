@@ -36,12 +36,17 @@
 							></text>
 						</view>
 						
-						<scroll-view v-if="item.goodsList.length > 1" class="goods-box" scroll-x>
-							<view
+						<scroll-view v-if="item.goodsList.length > 1">
+							<view 
 								v-for="(goodsItem, goodsIndex) in item.goodsList" :key="goodsIndex"
-								class="goods-item"
+								class="goods-box-single" @click="navToDetail"
 							>
 								<image class="goods-img" :src="goodsItem.image" mode="aspectFill"></image>
+								<view class="right">
+									<text class="title clamp">{{goodsItem.title}}</text>
+									<text class="attr-box">{{goodsItem.attr}}  x {{goodsItem.number}}</text>
+									<text class="price">{{goodsItem.price}}</text>
+								</view>
 							</view>
 						</scroll-view>
 						<view 
@@ -69,8 +74,8 @@
 						</view>
 						<view class="action-box b-t" v-if="item.state === 2">
 							<button class="action-btn" @click="applicate(item)">申请开票</button>
-							<button class="action-btn" @click="check(item)">查看物流</button>
-							<button class="action-btn recom" @click="confirmOrder(item)">确认收货</button>
+							<!-- <button class="action-btn" @click="check(item)">查看物流</button>
+							<button class="action-btn recom" @click="confirmOrder(item)">确认收货</button> -->
 						</view>
 						<view class="action-box b-t" v-if="item.state === 3">
 							<button class="action-btn" @click="applicate(item)">申请开票</button>
@@ -190,7 +195,11 @@
 					navItem.loadingType = 'more';
 				}, 600);	
 			}, 
-
+			navToDetail(){
+				uni.navigateTo({
+					url: '/pages/order/orderDetail'
+				})
+			},
 			//swiper 切换
 			changeTab(e){
 				this.tabCurrentIndex = e.target.current;
@@ -403,6 +412,32 @@
 				height: 120upx;
 				display: inline-block;
 				margin-right: 24upx;
+				.right{
+					flex: 1;
+					display: flex;
+					flex-direction: column;
+					padding: 0 30upx 0 24upx;
+					overflow: hidden;
+					.title{
+						font-size: $font-base + 2upx;
+						color: $font-color-dark;
+						line-height: 1;
+					}
+					.attr-box{
+						font-size: $font-sm + 2upx;
+						color: $font-color-light;
+						padding: 10upx 12upx;
+					}
+					.price{
+						font-size: $font-base + 2upx;
+						color: $font-color-dark;
+						&:before{
+							content: '￥';
+							font-size: $font-sm;
+							margin: 0 2upx 0 8upx;
+						}
+					}
+				}
 			}
 			.goods-img{
 				display: block;
