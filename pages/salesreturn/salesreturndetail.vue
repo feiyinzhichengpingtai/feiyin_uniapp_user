@@ -1,7 +1,14 @@
 <template>
 	<view>
 		<view class="stata-section">
-			请等待商家审核
+			<span>请等待商家审核</span>
+		</view>
+		<view class="btn-wrapper">
+			<button class="mini-btn" type="default" size="mini">按钮</button>
+		</view>
+		
+		<view class="yt-list-cell b-b">
+			<text class="cell-tit">退款信息</text>
 		</view>
 		<view class="goods-section">
 			<!-- 商品列表 -->
@@ -20,16 +27,29 @@
 
 		<!-- 优惠明细 -->
 		<view class="yt-list">
-			<view class="yt-list-cell b-b" @click="toggleMask('show')">
+			<view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">退款原因</text>
-				<text class="cell-tip active">
-					请选择退款原因
+				<text class="cell-tip clamp">
+					大小不适合
 				</text>
-				<text class="cell-more wanjia wanjia-gengduo-d"></text>
 			</view>
 			<view class="yt-list-cell b-b">
-				<text class="cell-tit clamp">退款数量</text>
+				<text class="cell-tit clamp">退款金额</text>
+				<text class="cell-tip clamp">
+					￥300
+				</text>
+			</view>
+			<view class="yt-list-cell b-b">
+				<text class="cell-tit clamp">退款件数</text>
 				<text class="cell-tip disabled">1件</text>
+			</view>
+			<view class="yt-list-cell b-b">
+				<text class="cell-tit clamp">申请时间</text>
+				<text class="cell-tip disabled">2019-11-17 11:57</text>
+			</view>
+			<view class="yt-list-cell b-b">
+				<text class="cell-tit clamp">退款编号</text>
+				<text class="cell-tip disabled">43124255666</text>
 			</view>
 		</view>
 		
@@ -109,8 +129,13 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		hight: 500upx;
-		background: red;
+		height: 300upx;
+		background: #B11B1B;
+		border-radius: 15px;
+		color: #ffffff;
+		span{
+			width: 70%;
+		}
 	}
 
 	.address-section {
@@ -372,6 +397,16 @@
 		width: 100%;
 		height: 2upx;
 		background: #c8c7cc;
+	}
+	.mini-btn {
+		margin-right: 10upx;
+		text-align: center;
+	}
+	
+	.btn-wrapper{
+		display: flex;
+		justify-content: flex-end;
+		padding: 10upx 20upx;
 	}
 
 </style>
