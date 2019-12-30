@@ -26,7 +26,11 @@
 		</view>
 		<view class="row default-row">
 			<text class="tit">地址标签：</text>
-			
+		</view>
+		<view class="calendar-tags-group example-body">
+			<view v-for="(item, index) in tags" :class="{ checked: item.checked }" :key="index" class="calendar-tags" @click="toggle(index, item)">
+				<view class="calendar-tags-item">{{ item.name }}</view>
+			</view>
 		</view>
 		
 		<button class="add-btn" @click="confirm">提交</button>
@@ -42,6 +46,25 @@
 			mpvueCityPicker
 		},
 		data() {
+			let tags = [{
+					id: 0,
+					name: '家',
+					checked: false,
+					attr: 'home'
+				},
+				{
+					id: 1,
+					name: '公司',
+					checked: false,
+					attr: 'company'
+				},
+				{
+					id: 2,
+					name: '学校',
+					checked: false,
+					attr: 'endDate'
+				},
+			]
 			return {
 				themeColor: '#007AFF',
 				cityPickerValue: [0, 0, 1],
@@ -127,7 +150,26 @@
 		background: $page-color-base;
 		padding-top: 16upx;
 	}
-
+	.calendar-tags-group {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+	.example-body {
+		border-top: 1px #f5f5f5 solid;
+		padding: 30upx;
+		background: #fff
+	}
+	.calendar-tags-item {
+		padding: 20upx 20upx;
+		border: 1px rgba(0, 0, 0, 0.2) solid;
+		color: #333;
+		border-radius: 10upx;
+		text-align: center;
+		margin: 10upx;
+		background: #f8f8f8;
+	}
 	.row{
 		display: flex;
 		align-items: center;
@@ -156,6 +198,15 @@
 		margin-top: 16upx;
 		.tit{
 			flex: 1;
+		}
+		.calendar-tags-item {
+			padding: 20upx 20upx;
+			border: 1px rgba(0, 0, 0, 0.2) solid;
+			color: #333;
+			border-radius: 10upx;
+			text-align: center;
+			margin: 10upx;
+			background: #f8f8f8;
 		}
 		switch{
 			transform: translateX(16upx) scale(.9);

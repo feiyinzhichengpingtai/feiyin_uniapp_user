@@ -23,7 +23,7 @@
 				<text class="name">西城小店铺</text>
 			</view>
 			<!-- 商品列表 -->
-			<!-- <view class="g-item">
+			<view class="g-item">
 				<image src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=756705744,3505936868&fm=11&gp=0.jpg"></image>
 				<view class="right">
 					<text class="title clamp">古黛妃 短袖t恤女夏装2019新款</text>
@@ -33,7 +33,7 @@
 						<text class="number">x 1</text>
 					</view>
 				</view>
-			</view> -->
+			</view>
 			<view class="g-item">
 				<image src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1620020012,789258862&fm=26&gp=0.jpg"></image>
 				<view class="right">
@@ -51,7 +51,6 @@
 
 		<!-- 配送方式 -->
 		<view class="yt-list">
-<<<<<<< HEAD
 			<view class="yt-list-cell b-b" @click="toggleMask('show')">
 				<view class="cell-icon">
 					送
@@ -69,40 +68,27 @@
 				<text class="cell-tit clamp">商家促销</text>
 				<text class="cell-tip disabled">暂无可用优惠</text>
 			</view> -->
-=======
 			<view class="yt-list-cell b-b" >
 				<!-- <view class="cell-icon">
 					券
 				</view>
 				
 				<text class="cell-tit clamp">优惠券</text> -->
-				<text class="cell-tit clamp">购买数量</text>
+				
+				<text class="cell-tit clamp" v-if="false">购买数量</text>
 				<!-- <text class="cell-tip active">
 					选择优惠券
 				</text> -->
-				<uni-number-box
+				<uni-number-box v-if="false"
 				></uni-number-box>
 				<text class="cell-more wanjia wanjia-gengduo-d"></text>
 			</view>
-			<view class="yt-list-cell b-b" @click="toggleMask('show')">
-				<!-- <view class="cell-icon hb">
-					减
-				</view>
-				<text class="cell-tit clamp">商家促销</text>
-				<text class="cell-tip disabled">暂无可用优惠</text> -->
-				<text class="cell-tit clamp">配送方式</text>
-				<text class="cell-tip active">
-					选择配送方式
-				</text> 
-			</view>
->>>>>>> 7751f55b2e65d4a3d946281fec872a80844cbacd
 		</view>
 		<!-- 金额明细 -->
 		<view class="yt-list">
-			<!-- <view class="yt-list-cell b-b">
+			<view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">商品金额</text>
 				<text class="cell-tip">￥179.88</text>
-<<<<<<< HEAD
 			</view>
 			<!-- <view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">优惠金额</text>
@@ -114,30 +100,14 @@
 			</view>
 			<view class="yt-list-cell desc-cell">
 				<text class="cell-tit clamp">买家留言</text>
-				<input class="desc" type="text" v-model="desc" placeholder="请填写留言信息" placeholder-class="placeholder" />
-=======
-			</view> -->
-			<view class="yt-list-cell b-b">
-				<text class="cell-tit clamp">开具发票</text>
-				<text class="cell-tip active">
-					本次不开具发票
-				</text> 
-				<!-- <text class="cell-tit clamp">优惠金额</text>
-				<text class="cell-tip red">-￥35</text> -->
+				<input class="desc" type="text" v-model="desc" placeholder="请填写留言信息" placeholder-class="placeholder" placeholder-style="text-align:right"/>
 			</view>
 			<!-- <view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">运费</text>
 				<text class="cell-tip">免运费</text>
-			</view> -->
-			<view class="yt-list-cell desc-cell">
-				<text class="cell-tit clamp">留言</text>
-				<input class="desc" type="text" v-model="desc" placeholder="选填,请先和商家协商一致" placeholder-class="placeholder" />
-
-				
->>>>>>> 7751f55b2e65d4a3d946281fec872a80844cbacd
-			</view>
+			</view>-->
 		</view>
-		<!-- 支付方式 -->
+		<!--支付方式 -->
 		<view class="yt-list-cell b-b" @click="toggleMask1('show')">
 			<view class="cell-icon">
 				付
@@ -146,7 +116,6 @@
 				<view class="cell-tip active">
 					{{payType1}}
 				</view>
-				<!-- <view class="uni-input">{{items1[index].name}}</view> -->
 			<text class="cell-more wanjia wanjia-gengduo-d"></text>
 		</view>
 		<view class="yt-list-cell b-b">
@@ -552,7 +521,7 @@
 
 		&.desc-cell {
 			.cell-tit {
-				max-width: 90upx;
+				max-width: 110upx;
 			}
 		}
 
