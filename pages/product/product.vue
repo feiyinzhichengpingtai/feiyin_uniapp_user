@@ -6,7 +6,7 @@
 					<view class="image-wrapper">
 						<image
 							:src="item.src" 
-							class="loaded" 
+							class="loaded"
 							mode="aspectFill"
 						></image>
 					</view>
@@ -23,9 +23,9 @@
 				<text class="coupon-tip">7折</text>
 			</view>
 			<view class="bot-row">
-				<text>销量: 108</text>
-				<text>库存: 4690</text>
-				<text>浏览量: 768</text>
+				<text>运费: 免运费</text>
+				<text>所在地: 上海</text>
+			<!--    <text>浏览量: 768</text> -->
 			</view>
 		</view>
 		
@@ -54,11 +54,11 @@
 				</view>
 				<text class="yticon icon-you"></text>
 			</view>
-			<view class="c-row b-b">
+<!-- 			<view class="c-row b-b">
 				<text class="tit">优惠券</text>
 				<text class="con t-r red">领取优惠券</text>
 				<text class="yticon icon-you"></text>
-			</view>
+			</view> -->
 			<view class="c-row b-b">
 				<text class="tit">促销活动</text>
 				<view class="con-list">
@@ -78,7 +78,7 @@
 		</view>
 		
 		<!-- 评价 -->
-		<view class="eva-section">
+<!-- 		<view class="eva-section">
 			<view class="e-header">
 				<text class="tit">评价</text>
 				<text>(86)</text>
@@ -96,11 +96,11 @@
 					</view>
 				</view>
 			</view>
-		</view>
+		</view> -->
 		
 		<view class="detail-desc">
 			<view class="d-header">
-				<text>图文详情</text>
+				<text>商品详情</text>
 			</view>
 			<rich-text :nodes="desc"></rich-text>
 		</view>
@@ -122,7 +122,7 @@
 			
 			<view class="action-btn-group">
 				<button type="primary" class=" action-btn no-border buy-now-btn" @click="buy">立即购买</button>
-				<button type="primary" class=" action-btn no-border add-cart-btn" @click="addCart">加入购物车</button>
+				<button type="primary" class=" action-btn no-border add-cart-btn"  @click="toggleSpec">加入购物车</button>
 			</view>
 		</view>
 		
@@ -136,7 +136,7 @@
 		>
 			<!-- 遮罩层 -->
 			<view class="mask"></view>
-			<view class="layer attr-content" @click.stop="stopPrevent">
+			<view class="layer attr-content" @click.stop="stopPrevent" >
 				<view class="a-t">
 					<image src="https://gd3.alicdn.com/imgextra/i3/0/O1CN01IiyFQI1UGShoFKt1O_!!0-item_pic.jpg_400x400.jpg"></image>
 					<view class="right">
@@ -163,8 +163,10 @@
 							{{childItem.name}}
 						</text>
 					</view>
+				
 				</view>
-				<button class="btn" @click="toggleSpec">完成</button>
+				<uni-number-box > </uni-number-box>
+				<button class="btn" @click="toggleSpec">加入购物车</button>
 			</view>
 		</view>
 		<!-- 分享 -->
@@ -178,9 +180,11 @@
 
 <script>
 	import share from '@/components/share';
+	import uniNumberBox from '@/components/uni-number-boxs.vue'
 	export default{
 		components: {
-			share
+			share,
+			uniNumberBox
 		},
 		data() {
 			return {
@@ -191,10 +195,10 @@
 				shareList: [],
 				imgList: [
 					{
-						src: 'https://gd3.alicdn.com/imgextra/i3/0/O1CN01IiyFQI1UGShoFKt1O_!!0-item_pic.jpg_400x400.jpg'
+					    src: 'https://gd3.alicdn.com/imgextra/i3/0/O1CN01IiyFQI1UGShoFKt1O_!!0-item_pic.jpg_400x400.jpg'
 					},
 					{
-						src: 'https://gd3.alicdn.com/imgextra/i3/TB1RPFPPFXXXXcNXpXXXXXXXXXX_!!0-item_pic.jpg_400x400.jpg'
+						src: 'https://gd3.alicdn.com/imgextra/i3/TB1RPFPPFXXXXcNXpXXXXXXXXXX_!!0-item_pic.jpr_400x400.jpg'
 					},
 					{
 						src: 'https://gd2.alicdn.com/imgextra/i2/38832490/O1CN01IYq7gu1UGShvbEFnd_!!38832490.jpg_400x400.jpg'
@@ -218,6 +222,10 @@
 						id: 2,
 						name: '颜色',
 					},
+					{
+						id: 3,
+						name: '数量',
+					}
 				],
 				specChildList: [
 					{
@@ -297,9 +305,11 @@
 					setTimeout(() => {
 						this.specClass = 'none';
 					}, 250);
+				    uni.showToast({title: "添加成功"});
 				}else if(this.specClass === 'none'){
 					this.specClass = 'show';
 				}
+			
 			},
 			//选择规格
 			selectSpec(index, pid){

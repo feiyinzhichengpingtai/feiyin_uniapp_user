@@ -68,7 +68,7 @@
 				</view>
 				<view class="text">全选</view>
 			</view>
-			<view class="delBtn" @tap="deleteList" v-if="selectedList.length>0">删除</view>
+			<view class="delBtn" @tap="deleteList" >删除</view>
 			<view class="settlement">
 				<view class="sum">合计:<view class="money">￥{{allPrice}}</view></view>
 				<view class="btn" @tap="toConfirmation">结算({{selectedList.length}})</view>
@@ -95,12 +95,12 @@
 				allCount:0,//被选中的产品数量
 				carts:[
 					{ 
-						shopTitle:"苹果旗舰店",
+						shopTitle:"商品旗舰店",
 						checked:false,
 						checkedCount:0,//此商店被选择的商品数量
 						productList:[
 							{id:1,
-							 img:'/static/img/goods/p1.jpg',
+							 img:'/static/goods/p1.jpg',
 							 name:'商品标题',spec:'规格:S码',
 							 price:127.5,
 							 number:3,
@@ -109,14 +109,14 @@
 					   ]
 					},
 					{
-					    shopTitle:"旗舰店",
+					    shopTitle:"食品旗舰店",
 						checked:false,
 						checkedCount:0,//此商店被选择的商品数量
 						productList:[
-					{id:2,img:'/static/img/goods/p2.jpg',name:'商品标题',spec:'规格:S码',price:127.5,number:1,isChecked:false},
-					{id:3,img:'/static/img/goods/p3.jpg',name:'商品标题',spec:'规格:S码',price:127.5,number:1,isChecked:false},
-					{id:4,img:'/static/img/goods/p4.jpg',name:'商品标题',spec:'规格:S码',price:127.5,number:1,isChecked:false},
-					{id:5,img:'/static/img/goods/p5.jpg',name:'商品标题',spec:'规格:S码',price:127.5,number:1,isChecked:false}
+					{id:2,img:'/static/goods/p2.jpg',name:'商品标题',spec:'规格:S码',price:127.5,number:1,isChecked:false},
+					{id:3,img:'/static/goods/p3.jpg',name:'商品标题',spec:'规格:S码',price:127.5,number:1,isChecked:false},
+					{id:4,img:'/static/goods/p4.jpg',name:'商品标题',spec:'规格:S码',price:127.5,number:1,isChecked:false},
+					{id:5,img:'/static/goods/p5.jpg',name:'商品标题',spec:'规格:S码',price:127.5,number:1,isChecked:false}
 				]
 			  }
 			],
@@ -391,8 +391,15 @@
 				         })
 				     })
 				 }
-				
-		}
+				 , getIndex () {
+             if (!this.index) {
+               this.index = 1
+              } else {
+             this.index++
+              }
+             return this.index
+    }
+  }
 	}
 </script>
 <style lang="scss">
