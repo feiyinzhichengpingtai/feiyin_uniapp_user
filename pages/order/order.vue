@@ -73,7 +73,7 @@
 							<text class="price">143.7</text>
 						</view>
 						<view class="action-box b-t" v-if="item.state === 1">
-							<button class="action-btn" @click="cancelOrder(item)">取消订单</button>
+							<button class="action-btn" @click="cancelOrder('show')">取消订单</button>
 							<button class="action-btn recom" @click="payOrder(item)">付款</button>
 						</view>
 						<view class="action-box b-t" v-if="item.state === 2">
@@ -103,6 +103,23 @@
 				</scroll-view>
 			</swiper-item>
 		</swiper>
+		<!-- 取消订单原因面板-->
+		<view class="mask" :class="maskState===0 ? 'none' : maskState===1 ? 'show' : ''" @click="cancelOrder('')">
+			<view class="mask-content" @click.stop.prevent="stopPrevent">
+				<view class="uni-list">
+					<radio-group @change="radioChange">
+						<label class="uni-list-cell uni-list-cell-pd" v-for="(item, index) in item1" :key="item.value">
+							<view>
+								<radio :value="item.value" :checked="index === current" />
+							</view>
+							<view>{{item.name}}</view>
+						</label>
+					</radio-group>	
+					<button class="con-btn" @click="confirm">确认取消</button>	
+					<button class="can-btn" @click="cancel">暂不取消</button>																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		
+				</view>
+			</view>
+		</view>
 	</view>
 </template> 
 
@@ -117,7 +134,27 @@
 		},
 		data() {
 			return {
+				item1: [{
+						value: 'other1',
+						name: '我不想买了',
+						checked: 'true'
+					},
+					{
+						value: 'other2',
+						name: '卖家缺货'
+					},
+					{
+						value: 'other2',
+						name: '其他原因'
+					},
+					{
+						value: 'other4',
+						name: '信息填写错误重新拍',
+					},
+				],
+				current: 0,
 				tabCurrentIndex: 0,
+				maskState: 0,
 				navList: [{
 						state: 0,
 						text: '全部',
@@ -211,7 +248,7 @@
 			}, 
 			navToDetail(){
 				uni.navigateTo({
-					url: '/pages/order/detail?state=3'
+					url: '/pages/order/detail?state=2'
 				})
 			},
 			//swiper 切换
@@ -233,26 +270,40 @@
 					uni.hideLoading();
 				}, 600)
 			},
+			radioChange(evt) {
+				for (let i = 0; i < this.item1.length; i++) {
+					if (this.item1[i].value === evt.target.value) {
+						this.current = i;
+						break;
+					}
+				}
+			},
 			//取消订单
-			cancelOrder(item){
-				uni.showLoading({
-					title: '请稍后'
-				})
+			cancelOrder(type){
+				let timer = type === 'show' ? 10 : 300;
+				let	state = type === 'show' ? 1 : 0;
+				this.maskState = 1;
 				setTimeout(()=>{
-					let {stateTip, stateTipColor} = this.orderStateExp(9);
-					item = Object.assign(item, {
-						state: 9,
-						stateTip, 
-						stateTipColor
-					})
-					
-					//取消订单后删除待付款中该项
-					let list = this.navList[1].orderList;
-					let index = list.findIndex(val=>val.id === item.id);
-					index !== -1 && list.splice(index, 1);
-					
-					uni.hideLoading();
-				}, 600)
+					this.maskState = state;
+				}, timer)
+				// uni.showLoading({
+				// 	title: '请稍后'
+				// })
+				// setTimeout(()=>{
+				// 	let {stateTip, stateTipColor} = this.orderStateExp(9);
+				// 	item = Object.assign(item, {
+				// 		state: 9,
+				// 		stateTip, 
+				// 		stateTipColor
+				// 	})
+				// 	
+				// 	//取消订单后删除待付款中该项
+				// 	let list = this.navList[1].orderList;
+				// 	let index = list.findIndex(val=>val.id === item.id);
+				// 	index !== -1 && list.splice(index, 1);
+				// 	
+				// 	uni.hideLoading();
+				// }, 600)
 			},
 			//支付订单
 			payOrder(item){
@@ -289,6 +340,7 @@
 					url: '/pages/logistics/logistics'
 				});
 			},
+			stopPrevent(){},
 			//确认收货
 			confirmOrder(item){
 				uni.showLoading({
@@ -309,6 +361,14 @@
 					
 					uni.hideLoading();
 				}, 600)
+			},
+			//确认取消订单
+			confirm(){
+				
+			},
+			//暂不取消订单
+			cancel(){
+				this.maskState=0;
 			},
 			//订单状态文字和颜色
 			orderStateExp(state){
@@ -348,7 +408,64 @@
 	.list-scroll-content{
 		height: 100%;
 	}
-	
+	.mask{
+		display: flex;
+		align-items: flex-end;
+		position: fixed;
+		left: 0;
+		top: var(--window-top);
+		bottom: 0;
+		width: 100%;
+		background: rgba(0,0,0,0);
+		z-index: 9995;
+		transition: .3s;
+		
+		.mask-content{
+			width: 100%;
+			min-height: 30vh;
+			max-height: 100vh;
+			background: #f3f3f3;
+			transform: translateY(100%);
+			transition: .3s;
+			overflow-y:scroll;
+		}
+		&.none{
+			display: none;
+		}
+		&.show{
+			background: rgba(0,0,0,.4);
+			
+			.mask-content{
+				transform: translateY(0);
+			}
+		}
+		.con-btn{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 340upx;
+			height: 80upx;
+			margin: 60upx auto;
+			font-size: $font-lg;
+			color: #fff;
+			background-color: $base-color;
+			border-radius: 10upx;
+			box-shadow: 1px 2px 5px rgba(219, 63, 96, 0.4);
+		}
+		.can-btn{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 340upx;
+			height: 80upx;
+			margin: 60upx auto;
+			font-size: $font-lg;
+			color: #fff;
+			background-color: $base-color;
+			border-radius: 10upx;
+			box-shadow: 1px 2px 5px rgba(219, 63, 96, 0.4);
+		}
+	}
 	.navbar{
 		display: flex;
 		height: 40px;
