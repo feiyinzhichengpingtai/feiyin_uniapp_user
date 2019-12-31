@@ -37,17 +37,49 @@
 			</view>
 			<uni-load-more :status="loadingType"></uni-load-more>
 		</view>
-
 		
+		<view class="cate-mask" :class="cateMaskState===0 ? 'none' : cateMaskState===1 ? 'show' : ''" @click="toggleCateMask">
+			<view class="cate-content" @click.stop.prevent="stopPrevent" @touchmove.stop.prevent="stopPrevent">
+				<view class="cate-title">筛选</view>
+				<view class="border"/>
+				<view class="cat-content-center"> 
+					<view class="cat-content-center-price">
+						<view class="text" style="width: 200upx;">价格</view>
+						<view class="text" style="-webkit-flex: 1;flex: 1;">自动占满余量</view>
+					</view>
+					<view class="cat-content-center-price">
+						<view class="text" style="width: 200upx;">地区</view>
+						<view class="text" style="-webkit-flex: 1;flex: 1;">
+							<xfl-select
+							style="font-size: 30upx;"
+							:list="list"
+							:initValue="'无'"
+							:showItemNum="2" 
+							:isCanInput="false"  
+							:placeholder = "'地区'"
+							@visible-change = 'visibleChange'>
+							</xfl-select>
+						</view>
+					</view>
+					<view class="cat-content-center-price">
+						<button type="primary">确定</button>
+						<button type="default" plain="true">取消</button>
+					</view>
+					
+					
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
 <script>
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
-	
+	import xflSelect from 'components/xfl-select/xfl-select.vue';
 	export default {
 		components: {
-			uniLoadMore	
+			uniLoadMore	,
+			xflSelect
 		},
 		
 		data() {
@@ -60,7 +92,11 @@
 				cateId: 0, //已选三级分类id
 				priceOrder: 0, //1 价格从低到高 2价格从高到低
 				cateList: [],
-				goodsList: []
+				goodsList: [],
+				list: [
+					'西安',
+					'成都',
+				]
 			};
 		},
 		
@@ -191,7 +227,10 @@
 					url: `/pages/product/product?id=${id}`
 				})
 			},
-			stopPrevent(){}
+			stopPrevent(){},
+			visibleChange(isShow){
+				console.log("isShow:"+isShow);
+			}
 		},
 	}
 </script>
@@ -302,14 +341,33 @@
 		background: rgba(0,0,0,0);
 		z-index: 95;
 		transition: .3s;
-		
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		.cate-content{
 			width: 630upx;
-			height: 100%;
+			height: 40%;
 			background: #fff;
-			float:right;
+			display: flex;
+			flex-direction: column;
 			transform: translateX(100%);
 			transition: .3s;
+			.cate-title{
+				display: flex;
+				padding: 20upx 30upx;
+				font-size: 35upx;
+				font-weight: bold ;
+			}
+			.cat-content-center{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				.cat-content-center-price{
+					display: flex;
+					flex-direction: row;	
+				}
+			}
 		}
 		&.none{
 			display: none;
