@@ -1,6 +1,29 @@
 <template>
 	<view class="content">
-		<view class="navbar">
+		<view class="right">
+			<view class="navbar">
+				<text class="spec">卖家已发货</text>	
+			</view>
+			<view class="navbar">
+				<text class="spec">还剩23小时59分57秒自动确认</text>
+			</view>
+		</view>
+		<!-- 地址 -->
+		<navigator url="/pages/address/address?source=1" class="address-section">
+			<view class="order-content">
+				<text class="yticon icon-shouhuodizhi"></text>
+				<view class="cen">
+					<view class="top">
+						<text class="name">{{addressData.name}}</text>
+						<text class="mobile">{{addressData.mobile}}</text>
+					</view>
+					<text class="address">{{addressData.address}} {{addressData.area}}</text>
+				</view>
+				<text class="yticon icon-you"></text>
+			</view>
+		
+		</navigator>
+		<!-- <view class="navbar">
 			<view 
 				v-for="(item, index) in navList" :key="index" 
 				class="nav-item" 
@@ -9,7 +32,7 @@
 			>
 				{{item.text}}
 			</view>
-		</view>
+		</view> -->
 
 		<swiper :current="tabCurrentIndex" class="swiper-box" duration="300" @change="changeTab">
 			<swiper-item class="tab-content" v-for="(tabItem,tabIndex) in navList" :key="tabIndex">
@@ -17,6 +40,7 @@
 					class="list-scroll-content" 
 					scroll-y
 				>
+				<!-- @scrolltolower="loadData" -->
 					<!-- 空白页 -->
 					<empty v-if="tabItem.loaded === true && tabItem.orderList.length === 0"></empty>
 					
@@ -25,10 +49,8 @@
 						v-for="(item,index) in tabItem.orderList" :key="index"
 						class="order-item"
 					>
-						<view class="i-top b-b">
-							<text class="time">{{item.time}}</text>
-							<text class="state" :style="{color: item.stateTipColor}">{{item.stateTip}}</text>
-							<!-- <text 
+						<!--<view class="i-top b-b">
+							 <text 
 								v-if="item.state===9" 
 								class="del-btn yticon icon-iconfontshanchu1"
 								@click="deleteOrder(index)"
@@ -37,23 +59,35 @@
 								v-if="item.state===8" 
 								class="del-btn yticon icon-iconfontshanchu1"
 								@click="deleteOrder(index)"
-							></text> -->
-						</view>
+							></text> 
+						</view>-->
 						
 						<view v-if="item.goodsList.length > 1">
 							<view 
 								v-for="(goodsItem, goodsIndex) in item.goodsList" :key="goodsIndex"
-								class="goods-box-single" @click="navToDetail"
+								class="goods-box-single"
 							>
 								<image class="goods-img" :src="goodsItem.image" mode="aspectFill"></image>
 								<view class="right">
 									<text class="title clamp">{{goodsItem.title}}</text>
 									<text class="attr-box">{{goodsItem.attr}}  x {{goodsItem.number}}</text>
 									<text class="price">{{goodsItem.price}}</text>
+									
+									<text
+										v-if="item.state===3" 
+										class="action-btn1"
+										@click="returnItem(item)"
+									>退款</text>
+									<!-- <button class="action-btn1" @click="returnItem(item)">退款</button> -->
+									
 								</view>
+								<!-- <view>
+									<button class="action-btn" @click="cancelOrder(item)">退款</button>	
+								</view> -->
 							</view>
 						</view>
-						<view 
+						
+						<view
 							v-if="item.goodsList.length === 1" 
 							class="goods-box-single"
 							v-for="(goodsItem, goodsIndex) in item.goodsList" :key="goodsIndex"
@@ -63,39 +97,65 @@
 								<text class="title clamp">{{goodsItem.title}}</text>
 								<text class="attr-box">{{goodsItem.attr}}  x {{goodsItem.number}}</text>
 								<text class="price">{{goodsItem.price}}</text>
+								<text
+									v-if="item.state===3" 
+									class="action-btn1"
+									@click="returnItem(item)"
+								>退款</text>
 							</view>
 						</view>
+						<view class="yt-list">
+							<view class="yt-list-cell b-b">
+								<text class="cell-tit clamp">商品金额</text>
+								<text class="cell-tip">￥179.88</text>
+							</view>
+							<!-- <view class="yt-list-cell b-b">
+								<text class="cell-tit clamp">优惠金额</text>
+								<text class="cell-tip red">-￥35</text>
+							</view> -->
+							<view class="yt-list-cell b-b">
+								<text class="cell-tit clamp">运费</text>
+								<text class="cell-tip">{{transExpence}}</text>
+							</view>
+							<view class="yt-list-cell desc-cell">
+								<text class="cell-tit clamp">买家留言</text>
+								<input class="desc" type="text" v-model="desc" placeholder="请填写留言信息" placeholder-class="placeholder" placeholder-style="text-align:right"/>
+							</view>
+							<!-- <view class="yt-list-cell b-b">
+								<text class="cell-tit clamp">运费</text>
+								<text class="cell-tip">免运费</text>
+							</view>-->
+						</view>
+						<!-- 底部 -->
+						<view class="footer">
+							<view class="action-box b-t" v-if="item.state === 1">
+								<button class="action-btn" @click="cancelOrder(item)">取消订单</button>
+								<button class="action-btn recom" @click="payOrder(item)">付款</button>
+							</view>
+							<view class="action-box b-t" v-if="item.state === 2">
+								<button class="action-btn" @click="applicate(item)">申请开票</button>
+								<!-- <button class="action-btn" @click="check(item)">查看物流</button>
+								<button class="action-btn recom" @click="deleteOrder(index)">确认收货</button> -->
+							</view>
+							<view class="action-box b-t" v-if="item.state === 3">
+								<button class="action-btn" @click="applicate(item)">申请开票</button>
+								<button class="action-btn" @click="check(item)">查看物流</button>
+								<button class="action-btn recom" @click="confirmOrder(item)">确认收货</button>
+							</view>
+							<view class="action-box b-t" v-if="item.state === 8">
+								<button class="action-btn" @click="applicate(item)">申请开票</button>
+								<button class="action-btn" @click="check(item)">查看物流</button>
+								<button class="action-btn recom" @click="deleteOrder(index)">删除订单</button>
+							</view>
+							<view class="action-box b-t" v-if="item.state === 9">
+								<button class="action-btn" @click="deleteOrder(index)">删除订单</button>
+								<!-- <button class="action-btn" @click="check(item)">查看物流</button>
+								<button class="action-btn recom" @click="confirmOrder(item)">确认收货</button> -->
+							</view>
+		
+							<!--<text class="submit" @click="submit">提交订单</text> -->
+						</view>
 						
-						<view class="price-box">
-							共
-							<text class="num">7</text>
-							件商品 实付款
-							<text class="price">143.7</text>
-						</view>
-						<view class="action-box b-t" v-if="item.state === 1">
-							<button class="action-btn" @click="cancelOrder(item)">取消订单</button>
-							<button class="action-btn recom" @click="payOrder(item)">付款</button>
-						</view>
-						<view class="action-box b-t" v-if="item.state === 2">
-							<button class="action-btn" @click="applicate(item)">申请开票</button>
-							<!-- <button class="action-btn" @click="check(item)">查看物流</button>
-							<button class="action-btn recom" @click="deleteOrder(index)">确认收货</button> -->
-						</view>
-						<view class="action-box b-t" v-if="item.state === 3">
-							<button class="action-btn" @click="applicate(item)">申请开票</button>
-							<button class="action-btn" @click="check(item)">查看物流</button>
-							<button class="action-btn recom" @click="confirmOrder(item)">确认收货</button>
-						</view>
-						<view class="action-box b-t" v-if="item.state === 8">
-							<button class="action-btn" @click="applicate(item)">申请开票</button>
-							<button class="action-btn" @click="check(item)">查看物流</button>
-							<button class="action-btn recom" @click="deleteOrder(index)">删除订单</button>
-						</view>
-						<view class="action-box b-t" v-if="item.state === 9">
-							<button class="action-btn" @click="deleteOrder(index)">删除订单</button>
-							<!-- <button class="action-btn" @click="check(item)">查看物流</button>
-							<button class="action-btn recom" @click="confirmOrder(item)">确认收货</button> -->
-						</view>
 					</view>
 					 
 					<!-- <uni-load-more :status="tabItem.loadingType"></uni-load-more> -->
@@ -117,6 +177,14 @@
 		},
 		data() {
 			return {
+				addressData: {
+					name: '许小星',
+					mobile: '13853989563',
+					addressName: '金九大道',
+					address: '山东省济南市历城区',
+					area: '149号',
+					default: false,
+				},
 				tabCurrentIndex: 0,
 				navList: [{
 						state: 0,
@@ -211,7 +279,7 @@
 			}, 
 			navToDetail(){
 				uni.navigateTo({
-					url: '/pages/order/detail?state=3'
+					url: '/pages/order/orderDetail'
 				})
 			},
 			//swiper 切换
@@ -343,6 +411,113 @@
 		height: 100%;
 	}
 	
+	.address-section {
+		padding: 30upx 0;
+		background: #fff;
+		position: relative;
+	
+		.order-content {
+			display: flex;
+			align-items: center;
+		}
+	
+		.icon-shouhuodizhi {
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 90upx;
+			color: #888;
+			font-size: 44upx;
+		}
+		.yt-list {
+			margin-top: 16upx;
+			background: #fff;
+		}
+		
+		.footer{
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			z-index: 995;
+			display: flex;
+			align-items: center;
+			width: 100%;
+			height: 90upx;
+			justify-content: space-between;
+			font-size: 30upx;
+			background-color: #fff;
+			z-index: 998;
+			color: $font-color-base;
+			box-shadow: 0 -1px 5px rgba(0,0,0,.1);
+			.action-box{
+				display: flex;
+				justify-content: flex-end;
+				align-items: center;
+				height: 100upx;
+				position: relative;
+				padding-right: 30upx;
+				.action-btn{
+					width: 160upx;
+						height: 60upx;
+						margin: 0;
+						margin-left: 150px;
+						padding: 0;
+						text-align: center;
+						line-height: 60upx;
+						font-size: $font-sm + 2upx;
+						color: $font-color-dark;
+						background: #fff;
+						border-radius: 100px;
+						&:after{
+							border-radius: 100px;
+						}
+						&.recom{
+							background: #fff9f9;
+							color: $base-color;
+							&:after{
+								border-color: #f7bcc8;
+							}
+						}
+					
+				}
+			}
+		}
+		.cen {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			font-size: 28upx;
+			color: $font-color-dark;
+		}
+	
+		.name {
+			font-size: 34upx;
+			margin-right: 24upx;
+		}
+	
+		.address {
+			margin-top: 16upx;
+			margin-right: 20upx;
+			color: $font-color-light;
+		}
+	
+		.icon-you {
+			font-size: 32upx;
+			color: $font-color-light;
+			margin-right: 30upx;
+		}
+	
+		.a-bg {
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			display: block;
+			width: 100%;
+			height: 5upx;
+		}
+	}
+	
 	.navbar{
 		display: flex;
 		height: 40px;
@@ -451,6 +626,29 @@
 							margin: 0 2upx 0 8upx;
 						}
 					}
+					.action-btn1{
+						width: 160upx;
+						height: 60upx;
+						margin: 0;
+						margin-left: 150px;
+						padding: 0;
+						text-align: center;
+						line-height: 60upx;
+						font-size: $font-sm + 2upx;
+						color: $font-color-dark;
+						background: #fff;
+						border-radius: 100px;
+						&:after{
+							border-radius: 100px;
+						}
+						&.recom{
+							background: #fff9f9;
+							color: $base-color;
+							&:after{
+								border-color: #f7bcc8;
+							}
+						}
+					}
 				}
 			}
 			.goods-img{
@@ -493,6 +691,29 @@
 						margin: 0 2upx 0 8upx;
 					}
 				}
+				.action-btn1{
+					width: 160upx;
+					height: 60upx;
+					margin: 0;
+					margin-left: 150px;
+					padding: 0;
+					text-align: center;
+					line-height: 60upx;
+					font-size: $font-sm + 2upx;
+					color: $font-color-dark;
+					background: #fff;
+					border-radius: 100px;
+					&:after{
+						border-radius: 100px;
+					}
+					&.recom{
+						background: #fff9f9;
+						color: $base-color;
+						&:after{
+							border-color: #f7bcc8;
+						}
+					}
+				}
 			}
 		}
 		
@@ -517,6 +738,8 @@
 				}
 			}
 		}
+		
+		
 		.action-box{
 			display: flex;
 			justify-content: flex-end;
@@ -529,7 +752,7 @@
 			width: 160upx;
 			height: 60upx;
 			margin: 0;
-			margin-left: 24upx;
+			margin-left: 70upx;
 			padding: 0;
 			text-align: center;
 			line-height: 60upx;
@@ -549,7 +772,6 @@
 			}
 		}
 	}
-	
 	
 	/* load-more */
 	.uni-load-more {
