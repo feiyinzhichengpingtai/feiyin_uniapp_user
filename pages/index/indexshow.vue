@@ -3,7 +3,7 @@
 		<!-- 小程序头部兼容 -->
 		<!-- #ifdef MP -->
 		<view class="mp-search-box">
-			<input class="ser-input" type="text" value="输入关键字搜索" disabled />
+			<input class="ser-input" type="text" value="输入关键字搜索" @click="search()"/>
 		</view>
 		<!-- #endif -->
 		<!-- 头部轮播 -->
@@ -24,9 +24,6 @@
 				<text class="num">{{swiperLength}}</text>
 			</view>
 		</view>
-		
-		
-
 	</view>
 </template>
 
@@ -75,6 +72,13 @@
 					url: `/pages/product/product?id=${id}`
 				})
 			},
+			
+			search(){
+				this.$api.msg('mp 点击了搜索框');
+				uni.navigateTo({
+					url: '/pages/search/list'
+				})
+			}
 		},
 		// #ifndef MP
 		// 标题栏input搜索框点击

@@ -21,16 +21,19 @@
 			<text class="cate-item yticon icon-fenlei1" @click="toggleCateMask('show')"></text>
 		</view>
 		<view class="goods-list">
-			<view class="g-item" v-for="(item, index) in goodsList" :key="index" @click="navToDetailPage(item)">
-				<image :src="item.image"></image>
-				<view class="right">
-					<text class="title clamp">{{item.title}}</text>
-					<text class="spec">春装款 L</text>
-					<view class="price-box">
-						<text class="price">{{item.price}}</text>
-						<text class="number">已售 {{item.sales}}</text>
-					</view>
+			<view style="width: 100%;" v-for="(item, index) in goodsList" :key="index" @click="navToDetailPage(item)">
+				<view class="g-item" >
+						<image :src="item.image"></image>
+						<view class="right">
+							<text class="title clamp">{{item.title}}</text>
+							<text class="spec">春装款 L</text>
+							<view class="price-box">
+								<text class="price">{{item.price}}</text>
+								<text class="number">已售 {{item.sales}}</text>
+							</view>
+						</view>
 				</view>
+				<view class="border"></view>
 			</view>
 			<uni-load-more :status="loadingType"></uni-load-more>
 		</view>
@@ -352,7 +355,8 @@
 		.g-item {
 			display: flex;
 			margin: 20upx 30upx;
-			padding: 0 30upx;
+			padding: 0 25upx;
+			width: 100%;
 			image {
 				flex-shrink: 0;
 				display: block;
@@ -399,7 +403,11 @@
 			}
 		}
 	}
-	
+	.border{
+		height: 2upx;
+		width: 100%;
+		background: #fafafa;
+	}
 	
 
 </style>
