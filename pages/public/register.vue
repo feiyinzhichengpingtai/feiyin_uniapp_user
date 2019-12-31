@@ -1,31 +1,35 @@
 <template>
+	<scroll-view>
 	<view class="container">
 		<view class="left-bottom-sign"></view>
 		<view class="back-btn yticon icon-zuojiantou-up" @click="navBack"></view>
 		<view class="right-top-sign"></view>
 		<!-- 设置白色背景防止软键盘把下部绝对定位元素顶上来盖住输入框等 -->
 		<view class="wrapper">
-			<view class="left-top-sign">LOGIN</view>
+			<view class="left-top-sign" v-if="false">LOGIN</view>
 			<view class="welcome">
 				<view class= "photo">
 					<image src="../../static/errorImage.jpg"></image>
 				</view>
 			</view>
 			<view class="input-content">
-				<view class="input-item">
-					<text class="tit">中国+86</text>
-					<view class="input-item-row">
-						<input
-							type="number" 
-							:value="mobile" 
-							placeholder="请输入手机号码"
-							maxlength="11"
-							data-key="mobile"
-							@input="inputChange"
-						/>
-						<button class="mini-btn" type="primary">发送验证码</button>
+				
+					<view class="input-item">
+						<text class="tit" v-if="false">中国+86</text>
+						<view class="input-item-row">
+							<input
+								type="number" 
+								:value="mobile" 
+								placeholder="请输入手机号码"
+								maxlength="11"
+								data-key="mobile"
+								@input="inputChange"
+							/>
+							<button class="mini-btn" type="primary" style="">发送验证码</button>
+						</view>
 					</view>
-				</view>
+					
+				
 				<view class="input-item">
 					<text class="tit">短信验证码</text>
 					<input 
@@ -86,6 +90,7 @@
 			<text @click="toRegist">隐私政策条例</text>
 		</view>
 	</view>
+	</scroll-view>
 </template>
 
 <script>
@@ -177,12 +182,13 @@
 		font-size: 120upx;
 		color: $page-color-base;
 		position:relative;
-		left: -16upx;
+		left: 0upx;
 	}
 	.welcome{
 		position:relative;
+		
 		left: 0upx;
-		top: -150upx;
+		top: -80upx;
 		font-size: 46upx;
 		color: #555;
 		text-shadow: 1px 0px 1px rgba(0,0,0,.3);
@@ -250,11 +256,14 @@
 		flex-direction: column;
 		align-items:flex-start;
 		justify-content: center;
-		padding: 0 30upx;
+		padding-left: 30upx;
 		background:$page-color-light;
 		height: 120upx;
 		border-radius: 4px;
 		margin-bottom: 50upx;
+		&:last-child{
+			margin-bottom: 0;
+		}
 		.tit{
 			height: 50upx;
 			line-height: 56upx;
@@ -265,15 +274,23 @@
 			height: 60upx;
 			font-size: $font-base + 2upx;
 			color: $font-color-dark;
-			width: 100%;
-		}
-			
+		}	
 	}
 
 	.input-item-row{
 		display: flex;
 		flex-direction: row;
 		align-items:center;
+		width: 100%;
+		justify-content: space-between;
+		button{
+			text-align: center;
+			vertical-align: middle;
+			height: 80upx;
+			font-size: 25upx;
+		}
+		
+		
 	}
 
 	.btn{

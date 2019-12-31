@@ -19,7 +19,7 @@
 						data-key="mobile"
 						@input="inputChange"
 					/>
-					<button class="mini-btn" type="primary" loading="true">发送验证码</button>
+					<button class="primary" type="primary" style="text-align: center;vertical-align: middle;height: 80upx;font-size: 25upx;">发送验证码</button>
 				</view>
 				<view class="input-item">
 					<text class="tit">短信验证码</text>
@@ -208,20 +208,14 @@
 			font-size: $font-sm+2upx;
 			color: $font-color-base;
 		}
-		input{
-			height: 60upx;
-			font-size: $font-base + 2upx;
-			color: $font-color-dark;
-			width: 100%;
-		}	
 	}
 
 	.number-input-item{
 		display:flex;
 		flex-direction: row;
-		align-items:center;
+		align-items: center;
 		justify-content: center;
-		padding: 0 30upx;
+		padding-left: 30upx;
 		background:$page-color-light;
 		height: 120upx;
 		border-radius: 4px;
@@ -233,7 +227,6 @@
 			height: 60upx;
 			font-size: $font-base + 2upx;
 			color: $font-color-dark;
-			width: 100%;
 		}	
 	}
 
