@@ -21,30 +21,67 @@
 			<text class="cate-item yticon icon-fenlei1" @click="toggleCateMask('show')"></text>
 		</view>
 		<view class="goods-list">
-			<view class="g-item" v-for="(item, index) in goodsList" :key="index" @click="navToDetailPage(item)">
-				<image :src="item.image"></image>
-				<view class="right">
-					<text class="title clamp">{{item.title}}</text>
-					<text class="spec">春装款 L</text>
-					<view class="price-box">
-						<text class="price">{{item.price}}</text>
-						<text class="number">已售 {{item.sales}}</text>
-					</view>
+			<view style="width: 100%;" v-for="(item, index) in goodsList" :key="index" @click="navToDetailPage(item)">
+				<view class="g-item" >
+						<image :src="item.image"></image>
+						<view class="right">
+							<text class="title clamp">{{item.title}}</text>
+							<text class="spec">春装款 L</text>
+							<view class="price-box">
+								<text class="price">{{item.price}}</text>
+								<text class="number">已售 {{item.sales}}</text>
+							</view>
+						</view>
 				</view>
+				<view class="border"></view>
 			</view>
 			<uni-load-more :status="loadingType"></uni-load-more>
 		</view>
-
 		
+		<view class="cate-mask" :class="cateMaskState===0 ? 'none' : cateMaskState===1 ? 'show' : ''" @click="toggleCateMask">
+			<view class="cate-content" @click.stop.prevent="stopPrevent" @touchmove.stop.prevent="stopPrevent">
+				<view class="cate-title">筛选</view>
+				<view class="border"/>
+				<view class="cat-content-center"> 
+					<view class="cat-content-center-price">
+						<view class="text" style="width: 200upx;">价格</view>
+						<view class="text" style="-webkit-flex: 1;flex: 1;display: flex;flex-direction: row;">
+							<input style="display: inline-block;" type="number" placeholder="数字" />
+							&nbsp;&nbsp;-&nbsp;&nbsp;
+							<input style="display: inline-block;" type="number" placeholder="数字" />
+						</view>
+					</view>
+					<view class="cat-content-center-price">
+						<view class="text" style="width: 200upx;">地区</view>
+
+							<xfl-select
+							style="-webkit-flex: 1;flex: 1;"
+							:list="list"
+							:initValue="'无'"
+							:showItemNum="2" 
+							:isCanInput="false"  
+							:placeholder = "'地区'"
+							@visible-change = 'visibleChange'>
+							</xfl-select>
+
+					</view>
+					<view class="cat-content-center-button">
+						<button type="primary">确定</button>
+						<button type="default" plain="true">取消</button>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
 <script>
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
-	
+	import xflSelect from 'components/xfl-select/xfl-select.vue';
 	export default {
 		components: {
-			uniLoadMore	
+			uniLoadMore	,
+			xflSelect
 		},
 		
 		data() {
@@ -57,7 +94,11 @@
 				cateId: 0, //已选三级分类id
 				priceOrder: 0, //1 价格从低到高 2价格从高到低
 				cateList: [],
-				goodsList: []
+				goodsList: [],
+				list: [
+					'西安',
+					'成都',
+				]
 			};
 		},
 		
@@ -188,7 +229,10 @@
 					url: `/pages/product/product?id=${id}`
 				})
 			},
-			stopPrevent(){}
+			stopPrevent(){},
+			visibleChange(isShow){
+				console.log("isShow:"+isShow);
+			}
 		},
 	}
 </script>
@@ -299,14 +343,37 @@
 		background: rgba(0,0,0,0);
 		z-index: 95;
 		transition: .3s;
-		
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		.cate-content{
 			width: 630upx;
-			height: 100%;
+			height: 30%;
 			background: #fff;
-			float:right;
+			display: flex;
+			flex-direction: column;
 			transform: translateX(100%);
 			transition: .3s;
+			.cate-title{
+				display: flex;
+				padding: 20upx 30upx;
+				font-size: 35upx;
+				font-weight: bold ;
+			}
+			.cat-content-center{
+				display: flex;
+				flex-direction: column;
+			}
+			.cat-content-center-price{
+				display: flex;
+				flex-direction: row;
+			}
+			.cat-content-center-button{
+				display: flex;
+				padding: 30upx 0;
+				flex-direction: row;
+				justify-content: space-around;
+			}
 		}
 		&.none{
 			display: none;
@@ -352,7 +419,8 @@
 		.g-item {
 			display: flex;
 			margin: 20upx 30upx;
-			padding: 0 30upx;
+			padding: 0 25upx;
+			width: 100%;
 			image {
 				flex-shrink: 0;
 				display: block;
@@ -399,7 +467,20 @@
 			}
 		}
 	}
-	
-	
+	.border{
+		height: 2upx;
+		width: 100%;
+		background: #fafafa;
+	}
+	.text {
+		margin: 15upx 10upx;
+		padding: 0 20upx;
+		background-color: #ebebeb;
+		height: 70upx;
+		line-height: 70upx;
+		text-align: center;
+		color: #777;
+		font-size: 26upx;
+	}
 
 </style>
