@@ -49,6 +49,7 @@
 			mpvueCityPicker
 		},
 		data() {
+			let flag=0;
 			let tags = [{
 					id: 0,
 					name: '家',
@@ -100,7 +101,12 @@
 		},
 		methods: {
 			toggle(index, item) {
-				this.tags[index].checked = !item.checked
+				this.tags[index].checked = !item.checked;
+				for(let i=0;i<3;i++){
+					if(i!=index){
+						this.tags[i].checked=false;
+					}
+				}
 				this.reckon()
 			},
 			reckon() {

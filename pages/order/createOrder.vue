@@ -318,8 +318,13 @@
 				this.payType = type;
 			},
 			submit(){
+				uni.showToast({
+					title: "loading",
+					icon: "loading",
+					duration: 5000
+				})
 				uni.redirectTo({
-					url: '/pages/money/pay'
+					url: '/pages/money/paySuccess'
 				})
 			},
 			stopPrevent(){}

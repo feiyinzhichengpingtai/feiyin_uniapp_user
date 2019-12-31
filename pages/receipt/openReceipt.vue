@@ -5,12 +5,12 @@
 			<!-- <input class="input" type="text" v-model="addressData.name" placeholder="收货人姓名" placeholder-class="placeholder" /> -->
 			<xfl-select
 			class="input"
+			v-model="receipt.paperType"
 			:list="list"
 			:initValue="'电子发票'"
 			:showItemNum="2" 
 			:isCanInput="false"  
 			:placeholder = "'请选择发票类型'"
-			@visible-change = 'visibleChange'
 			>
 			<!-- :style_Container="listBoxStyle" -->
 			</xfl-select>
@@ -19,12 +19,12 @@
 			<text class="tit">抬头类型</text>
 			<xfl-select
 			class="input"
+			v-model="receipt.paperTitleType"
 			:list="list1"
 			:initValue="'个人或事业单位'"
 			:showItemNum="2" 
 			:isCanInput="false"  
 			:placeholder = "'请选择抬头类型'"
-			@visible-change = 'visibleChange'
 			>
 			<!-- :style_Container="listBoxStyle" -->
 			</xfl-select>
@@ -32,37 +32,35 @@
 		</view>
 		<view class="row default-row">
 			<text class="tit">发票抬头</text>
-			<input class="input" type="text" v-model="addressData.paperTitle" placeholder="上海xxx公司" placeholder-class="placeholder" />
+			<input class="input" type="text" v-model="receipt.paperTitle" placeholder="上海xxx公司" placeholder-class="placeholder" />
 		</view>
 		<view class="row default-row"> 
 			<text class="tit">纳税人编号</text>
-			<input class="input" type="text" v-model="addressData.TaxPayerId" placeholder="4423422122Y" placeholder-class="placeholder" />
+			<input class="input" type="text" v-model="receipt.TaxPayerId" placeholder="4423422122Y" placeholder-class="placeholder" />
 		</view>
 		
 		<view class="row default-row">
 			<text class="tit">开户银行</text>
-			<input class="input" type="text" v-model="addressData.mobile" placeholder="选填" placeholder-class="placeholder" />
+			<input class="input" type="text" v-model="receipt.bank" placeholder="选填" placeholder-class="placeholder" />
 		</view>
 		<view class="row default-row">
 			<text class="tit">银行账号</text>
-			<input class="input" type="text" v-model="addressData.mobile" placeholder="选填" placeholder-class="placeholder" />
+			<input class="input" type="text" v-model="receipt.bankId" placeholder="选填" placeholder-class="placeholder" />
 		</view>
 		<view class="row default-row">
 			<text class="tit">企业地址</text>
-			<input class="input" type="text" v-model="addressData.mobile" placeholder="选填" placeholder-class="placeholder" />
+			<input class="input" type="text" v-model="receipt.companyAddress" placeholder="选填" placeholder-class="placeholder" />
 		</view>
 		<view class="row default-row">
 			<text class="tit">企业电话</text>
-			<input class="input" type="number" v-model="addressData.mobile" placeholder="选填" placeholder-class="placeholder" />
+			<input class="input" type="number" v-model="receipt.companyMobile" placeholder="选填" placeholder-class="placeholder" />
 		</view>
 		<view class="row default-row">
 			<text class="tit">设为默认发票信息</text>
-			<switch :checked="addressData.defaule" color="#fa436a" @change="switchChange" />
+			<switch :checked="receipt.defaule" color="#fa436a" @change="switchChange" />
 		</view>
 		<view class="uni-btn-v">
-			<navigator url="../../pages/order/createOrder" hover-class="navigator-hover">
-				<button type="default">本次不开具发票，继续下单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;></button>
-			</navigator>
+			<button type="default" @click="back">本次不开具发票，继续下单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;></button>
 		</view>
 		<button class="add-btn" @click="confirm">完成</button>
 	</view>
@@ -82,6 +80,17 @@
 					'个人或事业单位',
 					'企业',
 				],
+				receipt: {
+					paperType: '',
+					paperTitleType: '',
+					paperTitle: '',
+					TaxPayerId:[],
+					bank:"",
+					bankId: '',
+					companyAddress: '',
+					companyMobile:'',
+					default: false,
+				}
 			}
 		},
 		/* onLoad(option){
@@ -96,29 +105,37 @@
 				title
 			})
 		}, */
-		back() {
+		/* back() {
 			uni.navigateBack({
 				delta: 1
 			})
-		},
+		}, */
 		methods: {
+			back(){
+				uni.navigateBack({
+					delta: 1
+				})
+			},
 			switchChange(e){
 				this.addressData.default = e.detail;
 			},
-			
+			visibleChange(isShow){ 
+				// 列表框的显示隐藏事件
+				console.log('isShow::', isShow);
+			},
 			//地图选择地址
-			chooseLocation(){
+			/* chooseLocation(){
 				uni.chooseLocation({
 					success: (data)=> {
 						this.addressData.addressName = data.name;
 						this.addressData.address = data.name;
 					}
 				})
-			},
+			}, */
 			
 			//提交
 			confirm(){
-				let data = this.addressData;
+				let data = this.receipt;
 				if(!data.paperTitle){
 					this.$api.msg('请填写发票抬头');
 					return;
@@ -129,8 +146,8 @@
 				}
 				
 				//this.$api.prePage()获取上一页实例，可直接调用上页所有数据和方法，在App.vue定义
-				this.$api.prePage().refreshList(data, this.manageType);
-				this.$api.msg(`地址${this.manageType=='edit' ? '修改': '添加'}成功`);
+				/* this.$api.prePage().refreshList(data, this.manageType);
+				this.$api.msg(`地址${this.manageType=='edit' ? '修改': '添加'}成功`); */
 				setTimeout(()=>{
 					uni.navigateBack()
 				}, 800)
