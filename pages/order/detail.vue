@@ -2,10 +2,14 @@
 	<view class="content">
 		<view class="right">
 			<view class="navbar">
-				<text class="spec">卖家已发货</text>	
+				<text v-if="state1===1" class="spec">等待买家付款</text>	
+				<text v-if="state1===2" class="spec">等待卖家发货</text>	
+				<text v-if="state1===3" class="spec">卖家已发货</text>	
+				<text v-if="state1===8" class="spec">交易成功</text>	
+				<text v-if="state1===9" class="spec">交易关闭</text>	
 			</view>
-			<view class="navbar">
-				<text class="spec">还剩23小时59分57秒自动确认</text>
+			<view v-if="state1===1" class="navbar">
+				<text class="spec">还剩23小时59分57秒自动关闭</text>
 			</view>
 		</view>
 		<!-- 地址 -->
@@ -98,38 +102,63 @@
 								<text class="attr-box">{{goodsItem.attr}}  x {{goodsItem.number}}</text>
 								<text class="price">{{goodsItem.price}}</text>
 								<text
-									v-if="item.state===3" 
+									v-if="item.state!=1" 
 									class="action-btn1"
 									@click="returnItem(item)"
 								>退款</text>
 							</view>
 						</view>
-						<view class="yt-list">
-							<view class="yt-list-cell b-b">
-								<text class="cell-tit clamp">商品金额</text>
+						<view class="mym"></view>
+						<view class="yt-list1">
+							<view class="yt-list-cell1 b-b">
+								<text class="cell-tit clamp">商品总价</text>
 								<text class="cell-tip">￥179.88</text>
 							</view>
-							<!-- <view class="yt-list-cell b-b">
-								<text class="cell-tit clamp">优惠金额</text>
-								<text class="cell-tip red">-￥35</text>
-							</view> -->
-							<view class="yt-list-cell b-b">
-								<text class="cell-tit clamp">运费</text>
-								<text class="cell-tip">{{transExpence}}</text>
+							<view class="yt-list-cell1 b-b">
+								<text class="cell-tit clamp">配送方式</text>
+								<text class="cell-tip"><!-- {{giveType}} -->普通快递 ￥10.00</text>
 							</view>
-							<view class="yt-list-cell desc-cell">
-								<text class="cell-tit clamp">买家留言</text>
-								<input class="desc" type="text" v-model="desc" placeholder="请填写留言信息" placeholder-class="placeholder" placeholder-style="text-align:right"/>
-							</view>
-							<!-- <view class="yt-list-cell b-b">
-								<text class="cell-tit clamp">运费</text>
-								<text class="cell-tip">免运费</text>
-							</view>-->
 						</view>
+						<view class="yt-list1" >
+							<view class="yt-list-cell1 b-b">
+								<text class="cell-tit clamp">买家留言</text>
+								<text class="cell-tip">无</text>
+							</view>
+							<view class="yt-list-cell1 b-b">
+								<text v-if="item.state!=1" class="cell-tit clamp">实付金额</text>
+								<text v-if="item.state!=1" class="cell-tip">￥189.88</text>
+								<text v-if="item.state===1" class="cell-tit clamp">需付金额</text>
+								<text v-if="item.state===1" class="cell-tip">￥189.88</text>
+							</view>
+						</view>
+					    <view class="mym"></view>
+						<view class="yt-list1">
+							<view class="yt-list-cell1 b-b">
+								<text class="cell-tit clamp">订单编号</text>
+								<text class="cell-tip">11122233344455678990</text>
+							</view>
+							<view class="yt-list-cell1 b-b">
+								<text class="cell-tit clamp">下单时间</text>
+								<text class="cell-tip">2019-12-7 14:40:54</text>
+							</view>
+							<view v-if="item.state!=1" class="yt-list-cell1 b-b">
+								<text class="cell-tit clamp">付款时间</text>
+								<text class="cell-tip">2019-12-7 14:40:59</text>
+							</view>
+							<view v-if="item.state!=1" class="yt-list-cell1 b-b">
+								<text class="cell-tit clamp">付款方式</text>
+								<text class="cell-tip">支付宝</text>
+							</view>
+							<view v-if="item.state===3" class="yt-list-cell1 b-b">
+								<text class="cell-tit clamp">发货时间</text>
+								<text class="cell-tip">2019-12-8 00:40:54</text>
+							</view>
+						</view>
+						 <view class="mym"></view>
 						<!-- 底部 -->
 						<view class="footer">
 							<view class="action-box b-t" v-if="item.state === 1">
-								<button class="action-btn" @click="cancelOrder(item)">取消订单</button>
+								<button class="action-btn" @click="cancelOrder('show')">取消订单</button>
 								<button class="action-btn recom" @click="payOrder(item)">付款</button>
 							</view>
 							<view class="action-box b-t" v-if="item.state === 2">
@@ -177,6 +206,7 @@
 		},
 		data() {
 			return {
+				state1: 1,
 				addressData: {
 					name: '许小星',
 					mobile: '13853989563',
@@ -226,6 +256,7 @@
 			 * 替换onLoad下代码即可
 			 */
 			this.tabCurrentIndex = +options.state;
+			this.state1=options.state;
 			// #ifndef MP
 			this.loadData()
 			// #endif
@@ -244,7 +275,7 @@
 				let index = this.tabCurrentIndex;
 				let navItem = this.navList[index];
 				let state = navItem.state;
-				
+				console.log(state);
 				if(source === 'tabChange' && navItem.loaded === true){
 					//tab切换只有第一次需要加载数据
 					return;
@@ -301,26 +332,36 @@
 					uni.hideLoading();
 				}, 600)
 			},
+			//退款（退货退款）
+			returnItem(){
+				
+			},
 			//取消订单
-			cancelOrder(item){
-				uni.showLoading({
-					title: '请稍后'
-				})
+			cancelOrder(type){
+				let timer = type === 'show' ? 10 : 300;
+				let	state = type === 'show' ? 1 : 0;
+				this.maskState = 2;
 				setTimeout(()=>{
-					let {stateTip, stateTipColor} = this.orderStateExp(9);
-					item = Object.assign(item, {
-						state: 9,
-						stateTip, 
-						stateTipColor
-					})
-					
-					//取消订单后删除待付款中该项
-					let list = this.navList[1].orderList;
-					let index = list.findIndex(val=>val.id === item.id);
-					index !== -1 && list.splice(index, 1);
-					
-					uni.hideLoading();
-				}, 600)
+					this.maskState = state;
+				}, timer)
+				// uni.showLoading({
+				// 	title: '请稍后'
+				// })
+				// setTimeout(()=>{
+				// 	let {stateTip, stateTipColor} = this.orderStateExp(9);
+				// 	item = Object.assign(item, {
+				// 		state: 9,
+				// 		stateTip, 
+				// 		stateTipColor
+				// 	})
+				// 	
+				// 	//取消订单后删除待付款中该项
+				// 	let list = this.navList[1].orderList;
+				// 	let index = list.findIndex(val=>val.id === item.id);
+				// 	index !== -1 && list.splice(index, 1);
+				// 	
+				// 	uni.hideLoading();
+				// }, 600)
 			},
 			//支付订单
 			payOrder(item){
@@ -430,10 +471,7 @@
 			color: #888;
 			font-size: 44upx;
 		}
-		.yt-list {
-			margin-top: 16upx;
-			background: #fff;
-		}
+
 		
 		.footer{
 			position: fixed;
@@ -715,6 +753,7 @@
 					}
 				}
 			}
+			
 		}
 		
 		.price-box{
@@ -903,5 +942,94 @@
 		100% {
 			opacity: .2
 		}
+	}
+	.yt-list1 {
+		margin-top: 16upx;
+		background: #fff;
+	}
+	.yt-list-cell1 {
+		display: flex;
+		align-items: center;
+		padding: 10upx 30upx 10upx 40upx;
+		line-height: 70upx;
+		position: relative;
+	
+		&.cell-hover {
+			background: #fafafa;
+		}
+	
+		&.b-b:after {
+			left: 30upx;
+		}
+	
+		.cell-icon {
+			height: 32upx;
+			width: 32upx;
+			font-size: 22upx;
+			color: #fff;
+			text-align: center;
+			line-height: 32upx;
+			background: #f85e52;
+			border-radius: 4upx;
+			margin-right: 12upx;
+	
+			&.hb {
+				background: #ffaa0e;
+			}
+	
+			&.lpk {
+				background: #3ab54a;
+			}
+	
+		}
+	
+		.cell-more {
+			align-self: center;
+			font-size: 24upx;
+			color: $font-color-light;
+			margin-left: 8upx;
+			margin-right: -10upx;
+		}
+	
+		.cell-tit {
+			flex: 1;
+			font-size: 26upx;
+			color: $font-color-light;
+			margin-right: 10upx;
+		}
+	
+		.cell-tip {
+			font-size: 26upx;
+			color: $font-color-dark;
+	
+			&.disabled {
+				color: $font-color-light;
+			}
+	
+			&.active {
+				color: $base-color;
+			}
+			&.red{
+				color: $base-color;
+			}
+		}
+	
+		&.desc-cell {
+			.cell-tit {
+				max-width: 110upx;
+			}
+		}
+	
+		.desc {
+			flex: 1;
+			font-size: $font-base;
+			color: $font-color-dark;
+		}
+	}
+	.mym{
+		padding: 5upx 0;
+		background: #fafafa;
+		position: relative;
+		margin-left: -20px;
 	}
 </style>
