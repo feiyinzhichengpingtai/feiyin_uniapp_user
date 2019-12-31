@@ -332,10 +332,10 @@
 					uni.hideLoading();
 				}, 600)
 			},
-			//退款（退货退款）
-			returnItem(){
-				
-			},
+			// //退款（退货退款）
+			// returnItem(){
+			// 	
+			// },
 			//取消订单
 			cancelOrder(type){
 				let timer = type === 'show' ? 10 : 300;
@@ -386,11 +386,24 @@
 			},
 			//申请开票
 			applicate(){
-				
+				this.$api.msg('申请开票');
+				uni.navigateTo({
+					url: '/pages/receipt/openReceipt'
+				});
 			},
 			//查看物流
 			check(){
-				
+				this.$api.msg('查看物流');
+				uni.navigateTo({
+					url: '/pages/logistics/logistics'
+				});
+			},
+			//退货
+			returnItem(){
+				this.$api.msg('退货');
+				uni.navigateTo({
+					url: '/pages/salesreturn/application'
+				});
 			},
 			//确认收货
 			confirmOrder(item){
