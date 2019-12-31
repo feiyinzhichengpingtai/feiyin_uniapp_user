@@ -15,22 +15,22 @@
 		</view>
 		
 		<view class="introduce-section">
-			<text class="title">恒源祥2019春季长袖白色t恤 新款春装</text>
+			<text class="title">{{spuCmdyNm}}</text>
 			<view class="price-box">
 				<text class="price-tip">¥</text>
-				<text class="price">341.6</text>
-				<text class="m-price">¥488</text>
+				<text class="price">{{spuCmdtyLowstPrc}}</text>
+				<text class="m-price">¥{{spuCmdtyLowstCrsotPrc}}</text>
 				<text class="coupon-tip">7折</text>
 			</view>
 			<view class="bot-row">
-				<text>运费: 免运费</text>
-				<text>所在地: 上海</text>
+				<text>运费: {{spuCmdtyFrgFree}}</text>
+				<text>所在地: {{address}}</text>
 			<!--    <text>浏览量: 768</text> -->
 			</view>
 		</view>
 		
 		<!--  分享 -->
-		<view class="share-section" @click="share">
+<!-- 		<view class="share-section" @click="share">
 			<view class="share-icon">
 				<text class="yticon icon-xingxing"></text>
 				 返
@@ -42,7 +42,7 @@
 				<text class="yticon icon-you"></text>
 			</view>
 			
-		</view>
+		</view> -->
 		
 		<view class="c-list">
 			<view class="c-row b-b" @click="toggleSpec">
@@ -140,8 +140,8 @@
 				<view class="a-t">
 					<image src="https://gd3.alicdn.com/imgextra/i3/0/O1CN01IiyFQI1UGShoFKt1O_!!0-item_pic.jpg_400x400.jpg"></image>
 					<view class="right">
-						<text class="price">¥328.00</text>
-						<text class="stock">库存：188件</text>
+						<text class="price">{{spuCmdtyLowstPrc}}</text>
+						<text class="stock">库存：{{repertory}}件</text>
 						<view class="selected">
 							已选：
 							<text class="selected-text" v-for="(sItem, sIndex) in specSelected" :key="sIndex">
@@ -166,7 +166,7 @@
 				
 				</view>
 				<uni-number-box > </uni-number-box>
-				<button class="btn" @click="toggleSpec">加入购物车</button>
+				<button class="btn" @click="addCart">加入购物车</button>
 			</view>
 		</view>
 		<!-- 分享 -->
@@ -180,7 +180,8 @@
 
 <script>
 	import share from '@/components/share';
-	import uniNumberBox from '@/components/uni-number-boxs.vue'
+	import uniNumberBox from '@/components/uni-number-boxs.vue';
+	const PATH = 'http://47.92.111.175:8081/';
 	export default{
 		components: {
 			share,
@@ -188,6 +189,17 @@
 		},
 		data() {
 			return {
+				
+				//新增
+				spuCmdyNm:'恒源祥2019春季长袖白色t恤 新款春装',
+				spuCmdtyLowstPrc:386.5,
+				spuCmdtyLowstCrsotPrc:488,
+				spuCmdtyFrgFree:'免运费',
+				
+				//目前接口没有
+				address:'上海',
+				repertory:1000,
+				
 				specClass: 'none',
 				specSelected:[],
 				
@@ -305,7 +317,6 @@
 					setTimeout(() => {
 						this.specClass = 'none';
 					}, 250);
-				    uni.showToast({title: "添加成功"});
 				}else if(this.specClass === 'none'){
 					this.specClass = 'show';
 				}
@@ -348,11 +359,58 @@
 					url: `/pages/order/createOrder`
 				})
 			},
+			
+			//加入购物车接口
 			addCart(){
 				uni.showToast({title: "已加入购物车"});
+				this.toggleSpec();
 			},
-			stopPrevent(){}
-		},
+			
+			stopPrevent(){
+				
+			}
+			,
+			//获取商品详细信息接口
+			async getGoodsinfodata(that,id){
+			     wx.request({
+			          url: PATH+'user/proinfouser/?proId='+id,
+			          method:"GET",
+			          success (res) {
+			           console.log(res.data.proId)
+			           if(res.data.proType=='010'){
+			             that.category='电器'
+			           }else if(res.data.proType=='020'){
+			             that.category='饰品'
+			           }else if(res.data.proType=='030'){
+			             that.category='食物'
+			           }else{
+			             that.category='衣物'
+			           }
+			              that.goodsName=res.data.proName
+			              that.goodsPrice=res.data.proPrice
+			              that.describe=res.data.proDisc
+			              that.value=res.data.proAddress+' | 快递0.00'
+			            },
+			          fail (res){
+			          console.log(res.data);
+			          wx.hideLoading();
+			          wx.showToast({
+			            title: '网络调用失败',
+			            duration: 1000
+			          })
+			        }
+			    });
+			}
+    },
+		onLoad(option) {
+			//商品编号由上一个页面传入--待修改
+		    let arr = JSON.parse(option.text)
+		    console.log(option.text)
+		    const that = this
+			
+			//发送请求，获取商品详细信息-侯禹臣
+		    this.getGoodsinfodata(that,arr.proId)
+		  }
 
 	}
 </script>

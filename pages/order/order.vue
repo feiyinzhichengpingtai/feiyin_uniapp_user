@@ -328,11 +328,17 @@
 			},
 			//申请开票
 			applicate(){
-				
+				this.$api.msg('申请开票');
+				uni.navigateTo({
+					url: '/pages/receipt/openReceipt'
+				});
 			},
 			//查看物流
 			check(){
-				
+				this.$api.msg('查看物流');
+				uni.navigateTo({
+					url: '/pages/logistics/logistics'
+				});
 			},
 			stopPrevent(){},
 			//确认收货
