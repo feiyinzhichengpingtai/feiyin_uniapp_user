@@ -45,13 +45,17 @@
 				<view class="cat-content-center"> 
 					<view class="cat-content-center-price">
 						<view class="text" style="width: 200upx;">价格</view>
-						<view class="text" style="-webkit-flex: 1;flex: 1;">自动占满余量</view>
+						<view class="text" style="-webkit-flex: 1;flex: 1;display: flex;flex-direction: row;">
+							<input style="display: inline-block;" type="number" placeholder="数字" />
+							&nbsp;&nbsp;-&nbsp;&nbsp;
+							<input style="display: inline-block;" type="number" placeholder="数字" />
+						</view>
 					</view>
 					<view class="cat-content-center-price">
 						<view class="text" style="width: 200upx;">地区</view>
-						<view class="text" style="-webkit-flex: 1;flex: 1;">
+
 							<xfl-select
-							style="font-size: 30upx;"
+							style="-webkit-flex: 1;flex: 1;"
 							:list="list"
 							:initValue="'无'"
 							:showItemNum="2" 
@@ -59,14 +63,12 @@
 							:placeholder = "'地区'"
 							@visible-change = 'visibleChange'>
 							</xfl-select>
-						</view>
+
 					</view>
-					<view class="cat-content-center-price">
+					<view class="cat-content-center-button">
 						<button type="primary">确定</button>
 						<button type="default" plain="true">取消</button>
 					</view>
-					
-					
 				</view>
 			</view>
 		</view>
@@ -346,7 +348,7 @@
 		justify-content: center;
 		.cate-content{
 			width: 630upx;
-			height: 40%;
+			height: 30%;
 			background: #fff;
 			display: flex;
 			flex-direction: column;
@@ -361,12 +363,16 @@
 			.cat-content-center{
 				display: flex;
 				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				.cat-content-center-price{
-					display: flex;
-					flex-direction: row;	
-				}
+			}
+			.cat-content-center-price{
+				display: flex;
+				flex-direction: row;
+			}
+			.cat-content-center-button{
+				display: flex;
+				padding: 30upx 0;
+				flex-direction: row;
+				justify-content: space-around;
 			}
 		}
 		&.none{
@@ -466,6 +472,15 @@
 		width: 100%;
 		background: #fafafa;
 	}
-	
+	.text {
+		margin: 15upx 10upx;
+		padding: 0 20upx;
+		background-color: #ebebeb;
+		height: 70upx;
+		line-height: 70upx;
+		text-align: center;
+		color: #777;
+		font-size: 26upx;
+	}
 
 </style>
