@@ -23,7 +23,18 @@
 				<text class="name">西城小店铺</text>
 			</view>
 			<!-- 商品列表 -->
-			<view class="g-item">
+			<view class="g-item" v-for="(item, index) in goodsList" :key="index">
+				<image :src="item.image"></image>
+				<view class="right">
+					<text class="title clamp">{{item.title}}</text>
+					<text class="spec">春装款 L</text>
+					<view class="price-box">
+						<text class="price">￥ {{item.price}}</text>
+						<text class="number">x {{item.number}}</text>
+					</view>
+				</view>
+			</view>
+			<!-- <view class="g-item">
 				<image src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=756705744,3505936868&fm=11&gp=0.jpg"></image>
 				<view class="right">
 					<text class="title clamp">古黛妃 短袖t恤女夏装2019新款</text>
@@ -46,7 +57,7 @@
 						<text class="number">x 1</text>
 					</view>
 				</view>
-			</view>
+			</view> -->
 		</view>
 
 		<!-- 配送方式 -->
@@ -138,7 +149,7 @@
 		</view>
 		
 		<!-- 配送方式面板 -->
-		<view class="mask" :class="maskState===0 ? 'none' : maskState===1 ? 'show' : ''">
+		<view class="mask" :class="maskState===0 ? 'none' : maskState===1 ? 'show' : ''" @click="toggleMask('')">
 			<view class="mask-content" @click.stop.prevent="stopPrevent">
 				<view class="uni-list">
 					<radio-group @change="radioChange">
@@ -170,7 +181,7 @@
 			</view>
 		</view>
 		<!-- 支付方式面板-->
-		<view class="mask" :class="maskState1===0 ? 'none' : maskState1===2 ? 'show' : ''" >
+		<view class="mask" :class="maskState1===0 ? 'none' : maskState1===2 ? 'show' : ''" @click="toggleMask1('')">
 			<view class="mask-content" @click.stop.prevent="stopPrevent">
 				<view class="uni-list">
 					<radio-group @change="radioChange">
@@ -196,6 +207,12 @@
 		},
 		data() {
 			return {
+				goodsList: [{
+					title:'古黛妃 短袖t恤女夏装2019新款',
+					price:'178',
+					number:'2',
+					image:'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=756705744,3505936868&fm=11&gp=0.jpg'
+				}],
 				payType1:"微信支付",
 				giveType:"普通配送(快递费10元)",
 				transExpence:10,

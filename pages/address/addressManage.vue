@@ -26,13 +26,16 @@
 		</view>
 		<view class="row default-row">
 			<text class="tit">地址标签：</text>
+			<!-- <view v-for="(item, index) in tags" :class="{ checked: item.checked }" :key="index" class="calendar-tags" @click="toggle(index, item)">
+				<view class="calendar-tags-item">{{ item.name }}</view>
+			</view> -->
 		</view>
-		<view class="calendar-tags-group example-body">
+		<view class="row b-b">
 			<view v-for="(item, index) in tags" :class="{ checked: item.checked }" :key="index" class="calendar-tags" @click="toggle(index, item)">
 				<view class="calendar-tags-item">{{ item.name }}</view>
 			</view>
 		</view>
-		
+		<button class="del-btn" v-if="edit" @click="del">删除</button>
 		<button class="add-btn" @click="confirm">提交</button>
 		<mpvue-city-picker :themeColor="themeColor" ref="mpvueCityPicker" :pickerValueDefault="cityPickerValue" @onCancel="onCancel" @onConfirm="onConfirm"></mpvue-city-picker>
 	</view>
@@ -66,6 +69,8 @@
 				},
 			]
 			return {
+				tags,
+				edit:false,
 				themeColor: '#007AFF',
 				cityPickerValue: [0, 0, 1],
 				addressData: {
@@ -76,7 +81,8 @@
 					cityCode:"",
 					address: '',
 					area: '',
-					default: false
+					default: false,
+					tag:''
 				}
 			}
 		},
@@ -84,7 +90,7 @@
 			let title = '新增收货地址';
 			if(option.type==='edit'){
 				title = '编辑收货地址'
-				
+				this.edit=true;
 				this.addressData = JSON.parse(option.data)
 			}
 			this.manageType = option.type;
@@ -93,6 +99,24 @@
 			})
 		},
 		methods: {
+			toggle(index, item) {
+				this.tags[index].checked = !item.checked
+				this.reckon()
+			},
+			reckon() {
+				if (this.tags[0].checked) {
+					console.log(this.tags[0].name);
+					this.addressData.tag = this.tags[0].name
+				} else if(this.tags[1].checked){
+					console.log(this.tags[1].name);
+					this.addressData.tag = this.tags[1].name
+				}else if(this.tags[2].checked){
+					console.log(this.tags[2].name);
+					this.addressData.tag = this.tags[2].name
+				}else {
+					this.addressData.tag = ''
+				}
+			},
 			switchChange(e){
 				this.addressData.default = e.detail;
 			},
@@ -141,6 +165,9 @@
 					uni.navigateBack()
 				}, 800)
 			},
+			del(){
+				
+			}
 		}
 	}
 </script>
@@ -150,26 +177,7 @@
 		background: $page-color-base;
 		padding-top: 16upx;
 	}
-	.calendar-tags-group {
-		display: flex;
-		flex-direction: column;
-		flex-wrap: wrap;
-		justify-content: space-between;
-	}
-	.example-body {
-		border-top: 1px #f5f5f5 solid;
-		padding: 30upx;
-		background: #fff
-	}
-	.calendar-tags-item {
-		padding: 20upx 20upx;
-		border: 1px rgba(0, 0, 0, 0.2) solid;
-		color: #333;
-		border-radius: 10upx;
-		text-align: center;
-		margin: 10upx;
-		background: #f8f8f8;
-	}
+	
 	.row{
 		display: flex;
 		align-items: center;
@@ -193,14 +201,10 @@
 			font-size: 36upx;
 			color: $font-color-light;
 		}
-	}
-	.default-row{
-		margin-top: 16upx;
-		.tit{
-			flex: 1;
-		}
 		.calendar-tags-item {
-			padding: 20upx 20upx;
+			width: 150upx;
+			font-size: 30upx;
+			padding: 5upx 5upx;
 			border: 1px rgba(0, 0, 0, 0.2) solid;
 			color: #333;
 			border-radius: 10upx;
@@ -208,11 +212,39 @@
 			margin: 10upx;
 			background: #f8f8f8;
 		}
+		.calendar-tags {
+			width: 100%;
+			box-sizing: border-box;
+		}
+		.checked .calendar-tags-item {
+			background: rgb(0, 122, 255);
+			color: #fff;
+			border: 1px rgba(0, 0, 0, 0.1) solid;
+		}
+	}
+	.default-row{
+		margin-top: 16upx;
+		.tit{
+			flex: 1;
+		}
 		switch{
 			transform: translateX(16upx) scale(.9);
 		}
 	}
 	.add-btn{
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 690upx;
+		height: 80upx;
+		margin: 60upx auto;
+		font-size: $font-lg;
+		color: #fff;
+		background-color: $base-color;
+		border-radius: 10upx;
+		box-shadow: 1px 2px 5px rgba(219, 63, 96, 0.4);
+	}
+	.del-btn{
 		display: flex;
 		align-items: center;
 		justify-content: center;
