@@ -24,13 +24,13 @@
 				<view class="input-item">
 					<text class="tit">短信验证码</text>
 					<input 
-						type="mobile" 
+						type="number" 
 						value="" 
 						placeholder="填写6位短信验证码"
 						placeholder-class="input-empty"
-						maxlength="20"
+						maxlength="6"
 						password 
-						data-key="password"
+						data-key="smsCode"
 						@input="inputChange"
 						@confirm="toLogin"
 					/>
@@ -53,7 +53,8 @@
 
 <script>
 	import {  
-        mapMutations  
+        mapMutations,
+		mapState
     } from 'vuex';
 	
 	export default{
@@ -82,27 +83,62 @@
 					url: '/pages/public/register'
 				});
 			},
-			async toLogin(){
-				this.logining = true;
-				const {mobile, password} = this;
-				/* 数据验证模块
-				if(!this.$api.match({
+			async toLogin() {
+				//logining = true;
+				console.log("toLogin");
+				const {
 					mobile,
-					password
-				})){
-					this.logining = false;
-					return;
+					smsCode
+				} = this;
+				
+				console.log("mobile:"+mobile);
+				console.log("smsCode:"+smsCode);
+
+				
+				//数据验证模块
+				// if(!this.$api.match({
+				// 	mobile,
+				// 	password
+				// })){
+				// 	this.logining = false;
+				// 	return;
+				// }
+			
+				const [err, res] = await uni.request({
+					url: "http://10.141.53.7:8080/MemberCenter/api/v1/members/login?mode=verificationCode",
+					method: 'GET',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded',
+						'deviceNo': '121',
+						'channelNo': '2202',
+						'systemNo': '0657'
+					},
+					data: {
+						phone: mobile,
+						smsCode: smsCode,
+					}
+				});
+				if (err) {
+					console.log('request fail', err);
+					uni.showModal({
+						content: err.errMsg,
+						showCancel: false
+					});
+				} else {
+					console.log('request success', res)
+					uni.showToast({
+						title: '请求成功',
+						icon: 'success',
+						mask: true,
+						duration: 2000
+					});
+					console.log(JSON.stringify(res))
 				}
-				*/
-				const sendData = {
-					mobile,
-					password
-				};
-				const result = await this.$api.json('userInfo');
-				if(result.status === 1){
-					this.login(result.data);
-                    uni.navigateBack();  
-				}else{
+			
+				if (res.data.returnCode == 200000) {
+					this.login(res.data.data);
+					uni.navigateBack();
+				} else {
 					this.$api.msg(result.msg);
 					this.logining = false;
 				}
