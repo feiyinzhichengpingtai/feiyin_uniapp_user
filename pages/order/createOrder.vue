@@ -129,15 +129,17 @@
 				</view>
 			<text class="cell-more wanjia wanjia-gengduo-d"></text>
 		</view>
-		<view class="yt-list-cell b-b">
-			<view class="cell-icon">
-				票
-			</view>
-			<text class="cell-tit clamp">开具发票</text>
+	
 			<navigator url="../../pages/receipt/openReceipt" hover-class="navigator-hover">
-				<button type="default">></button>
+				<view class="yt-list-cell b-b">
+					<view class="cell-icon">
+						票
+					</view>
+					<text class="cell-tit clamp">开具发票</text>
+					<text class="cell-tip active">{{invoiceInfo}}</text>
+				</view>
 			</navigator>
-		</view>
+		
 		<!-- 底部 -->
 		<view class="footer">
 			<view class="price-content">
@@ -214,6 +216,7 @@
 					image:'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=756705744,3505936868&fm=11&gp=0.jpg'
 				}],
 				payType1:"微信支付",
+				invoiceInfo:"本次不开具发票",
 				giveType:"普通配送(快递费10元)",
 				transExpence:10,
 				items: [{

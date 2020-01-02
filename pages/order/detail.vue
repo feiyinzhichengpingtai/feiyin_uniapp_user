@@ -3,13 +3,9 @@
 		<view class="right">
 			<view class="navbar">
 				<text class="spec">{{text1}}</text>	
-				<text v-if="state1===2" class="spec">等待卖家发货</text>	
-				<text v-if="state1===3" class="spec">卖家已发货</text>	
-				<text v-if="state1===8" class="spec">交易成功</text>	
-				<text v-if="state1===9" class="spec">交易关闭</text>	
 			</view>
-			<view v-if="state1===1" class="navbar">
-				<text class="spec">还剩23小时59分57秒自动关闭</text>
+			<view class="navbar">
+				<text class="spec">{{text2}}</text>
 			</view>
 		</view>
 		<!-- 地址 -->
@@ -243,6 +239,7 @@
 					},
 				],
 				text1: "",
+				text2: "",
 				state1: "",
 				addressData: {
 					name: '许小星',
@@ -509,6 +506,7 @@
 			updateState(that,id){
 				if(id==1){
 					that.text1="等待买家付款"
+					that.text2="还剩23小时49分45秒自动关闭"
 				}else if(id==2){
 					that.text1="等待卖家发货"
 				}else if(id==3){
