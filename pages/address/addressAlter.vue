@@ -28,7 +28,12 @@
 			<text class="tit">标签：</text>
 			
 		</view>
-		<button class="del-btn" @click="del">删除</button>
+		<view class="row b-b">
+			<view v-for="(item, index) in tags" :class="{ checked: item.checked }" :key="index" class="calendar-tags" @click="toggle(index, item)">
+				<view class="calendar-tags-item">{{ item.name }}</view>
+			</view>
+		</view>
+		<button class="del-btn" v-if="edit" @click="del">删除</button>
 		<button class="add-btn" @click="confirm">提交</button>
 		<mpvue-city-picker :themeColor="themeColor" ref="mpvueCityPicker" :pickerValueDefault="cityPickerValue" @onCancel="onCancel" @onConfirm="onConfirm"></mpvue-city-picker>
 	</view>
@@ -42,7 +47,28 @@
 			mpvueCityPicker
 		},
 		data() {
+			let tags = [{
+					id: 0,
+					name: '家',
+					checked: false,
+					attr: 'home'
+				},
+				{
+					id: 1,
+					name: '公司',
+					checked: false,
+					attr: 'company'
+				},
+				{
+					id: 2,
+					name: '学校',
+					checked: false,
+					attr: 'endDate'
+				},
+			]
 			return {
+				tags,
+				edit:false,
 				themeColor: '#007AFF',
 				cityPickerValue: [0, 0, 1],
 				addressData: {
@@ -56,16 +82,11 @@
 			}
 		},
 		onLoad(option){
-			let title = '新增收货地址';
 			if(option.type==='edit'){
-				title = '编辑收货地址'
-				
+				this.edit=true;
 				this.addressData = JSON.parse(option.data)
 			}
 			this.manageType = option.type;
-			uni.setNavigationBarTitle({
-				title
-			})
 		},
 		methods: {
 			switchChange(e){
@@ -152,6 +173,26 @@
 		.icon-shouhuodizhi{
 			font-size: 36upx;
 			color: $font-color-light;
+		}
+		.calendar-tags-item {
+			width: 150upx;
+			font-size: 30upx;
+			padding: 5upx 5upx;
+			border: 1px rgba(0, 0, 0, 0.2) solid;
+			color: #333;
+			border-radius: 10upx;
+			text-align: center;
+			margin: 10upx;
+			background: #f8f8f8;
+		}
+		.calendar-tags {
+			width: 100%;
+			box-sizing: border-box;
+		}
+		.checked .calendar-tags-item {
+			background: rgb(0, 122, 255);
+			color: #fff;
+			border: 1px rgba(0, 0, 0, 0.1) solid;
 		}
 	}
 	.default-row{

@@ -18,12 +18,20 @@
 
 		<!-- 优惠明细 -->
 		<view class="yt-list">
-			<view class="yt-list-cell b-b" @click="toggleMask('show')">
+			<!-- <view class="yt-list-cell b-b" @click="toggleMask('show')">
 				<text class="cell-tit clamp">退款原因</text>
 				<text class="cell-tip active">
 					请选择退款原因
 				</text>
 				<text class="cell-more wanjia wanjia-gengduo-d"></text>
+			</view> -->
+			<view class="yt-list-cell b-b">
+				<text class="cell-tit clamp">退款原因</text>
+				<view class="cell-tip active">
+					<picker @change="bindPickerChange" :value="index" :range="returnReason" range-key="name">
+						<view class="uni-input">{{returnReason[index].name}}</view>
+					</picker>
+				</view>
 			</view>
 			<view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">退款数量</text>
@@ -45,44 +53,41 @@
 				<text class="cell-tit clamp">手机号码</text>
 				<text class="cell-tip"></text>
 			</view>
-			<view class="border"/>
+			<!-- <view class="border"> -->
 			<view class="yt-list-cell desc-cell">
 				<text class="cell-tit clamp">退款说明</text>
-				<input class="desc" type="text" v-model="desc" placeholder="选填,最多200字" placeholder-class="placeholder" />
+				<input class="desc" type="text" v-model="desc" placeholder="选填,最多200字" placeholder-style="text-align:right" />
 			</view>
-			<view class="border"/>
+			<!-- <view class="border"/> -->
 			<view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">上传凭证</text>
-				<text class="cell-tip">最多可上传5张图片</text>
-			</view>
-			<view class="yt-list-cell b-b">
-				<text class="cell-tit clamp"></text>
-				<text class="cell-tip">最多可上传5张图片</text>
+				<text class="cell-tip disabled">最多可上传5张图片</text>
 			</view>
 			<view class="uni-list list-pd">
-			    <view class="uni-list-cell cell-pd">
-			        <view class="uni-uploader">
-			            <view class="uni-uploader-head">
-			                <view class="uni-uploader-title">点击可预览选好的图片</view>
-			                <view class="uni-uploader-info">{{imageList.length}}/9</view>
-			            </view>
-			            <view class="uni-uploader-body">
-			                <view class="uni-uploader__files">
-			                    <block v-for="(image,index) in imageList" :key="index">
-			                        <view class="uni-uploader__file">
-			                            <image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
-			                        </view>
-			                    </block>
-			                    <view class="uni-uploader__input-box">
-			                        <view class="uni-uploader__input" @tap="chooseImage"></view>
-			                    </view>
-			                </view>
-			            </view>
-			        </view>
-			    </view>
+				<view class="uni-list-cell cell-pd">
+					<view class="uni-uploader">
+						<view class="uni-uploader-head">
+							<view class="uni-uploader-title">点击可预览选好的图片</view>
+							<view class="uni-uploader-info">{{imageList.length}}/5</view>
+						</view>
+						<view class="uni-uploader-body">
+							<view class="uni-uploader__files">
+								<block v-for="(image,index) in imageList" :key="index">
+									<view class="uni-uploader__file">
+										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+									</view>
+								</block>
+								<view class="uni-uploader__input-box">
+									<view class="uni-uploader__input" @tap="chooseImage"></view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
 			</view>
+			
 		</view>
-		
+
 		<!-- 优惠券面板 -->
 		<view class="mask" :class="maskState===0 ? 'none' : maskState===1 ? 'show' : ''" @click="toggleMask">
 			<view class="mask-content" @click.stop.prevent="stopPrevent">
@@ -110,26 +115,34 @@
 </template>
 
 <script>
+	// #ifdef APP-PLUS
+	import permision from "common/permission.js"
+	// #endif
+	var sourceType = [
+	    ['camera'],
+	    ['album'],
+	    ['camera', 'album']
+	]
+	var sizeType = [
+	    ['compressed'],
+	    ['original'],
+	    ['compressed', 'original']
+	]
 	export default {
 		data() {
 			return {
+				imageList: [],
+				sourceTypeIndex: 2,
+				sourceType: ['拍照', '相册', '拍照或相册'],
+				sizeTypeIndex: 2,
+				sizeType: ['压缩', '原图', '压缩或原图'],
+				countIndex: 4,
+				count: [1, 2, 3, 4, 5],
+				index:1,
+				returnReason: [{name:'未按约定时间发货'},{name: '拍错/多拍/不喜欢'}, {name:'协商一致退款'}, {name:'其他'}],
 				maskState: 0, //优惠券面板显示状态
 				desc: '', //备注
 				payType: 1, //1微信 2支付宝
-				couponList: [
-					{
-						title: '新用户专享优惠券',
-						price: 5,
-					},
-					{
-						title: '庆五一发一波优惠券',
-						price: 10,
-					},
-					{
-						title: '优惠券优惠券优惠券优惠券',
-						price: 15,
-					}
-				],
 				addressData: {
 					name: '许小星',
 					mobile: '13853989563',
@@ -140,12 +153,116 @@
 				}
 			}
 		},
+		onUnload() {
+		    this.imageList = [],
+			this.sourceTypeIndex = 2,
+			this.sourceType = ['拍照', '相册', '拍照或相册'],
+			this.sizeTypeIndex = 2,
+			this.sizeType = ['压缩', '原图', '压缩或原图'],
+			this.countIndex = 4;
+		},
 		onLoad(option){
+			
 			//商品数据
 			//let data = JSON.parse(option.data);
 			//console.log(data);
 		},
 		methods: {
+			bindPickerChange: function(e) {
+				console.log('picker发送选择改变，携带值为：' + e.target.value)
+				this.index = e.target.value
+			},
+			previewImage: function(e) {
+			    var current = e.target.dataset.src
+			    uni.previewImage({
+			        current: current,
+			        urls: this.imageList
+			    })
+			},
+			sourceTypeChange: function(e) {
+			    this.sourceTypeIndex = e.target.value
+			},
+			sizeTypeChange: function(e) {
+			    this.sizeTypeIndex = e.target.value
+			},
+			countChange: function(e) {
+			    this.countIndex = e.target.value;
+			},
+			chooseImage: async function() {
+			    // #ifdef APP-PLUS
+			    // TODO 选择相机或相册时 需要弹出actionsheet，目前无法获得是相机还是相册，在失败回调中处理
+			    if (this.sourceTypeIndex !== 2) {
+			        let status = await this.checkPermission();
+			        if (status !== 1) {
+			            return;
+			        }
+			    }
+			    // #endif
+			
+			    if (this.imageList.length === 5) {
+			        let isContinue = await this.isFullImg();
+			        console.log("是否继续?", isContinue);
+			        if (!isContinue) {
+			            return;
+			        }
+			    }
+			    uni.chooseImage({
+			        sourceType: sourceType[this.sourceTypeIndex],
+			        sizeType: sizeType[this.sizeTypeIndex],
+			        count: this.imageList.length + this.count[this.countIndex] > 5 ? 5 - this.imageList.length :
+			            this.count[this.countIndex],
+			        success: (res) => {
+			            this.imageList = this.imageList.concat(res.tempFilePaths);
+			        },
+			        fail: (err) => {
+			            // #ifdef APP-PLUS
+			            if (err['code'] && err.code !== 0 && this.sourceTypeIndex === 2) {
+			                this.checkPermission(err.code);
+			            }
+			            // #endif
+			        }
+			    })
+			},
+			isFullImg: function() {
+			    return new Promise((res) => {
+			        uni.showModal({
+			            content: "已经有5张图片了,是否清空现有图片？",
+			            success: (e) => {
+			                if (e.confirm) {
+			                    this.imageList = [];
+			                    res(true);
+			                } else {
+			                    res(false)
+			                }
+			            },
+			            fail: () => {
+			                res(false)
+			            }
+			        })
+			    })
+			},
+			async checkPermission(code) {
+			    let type = code ? code - 1 : this.sourceTypeIndex;
+			    let status = permision.isIOS ? await permision.requestIOS(sourceType[type][0]) :
+			        await permision.requestAndroid(type === 0 ? 'android.permission.CAMERA' :
+			            'android.permission.READ_EXTERNAL_STORAGE');
+			
+			    if (status === null || status === 1) {
+			        status = 1;
+			    } else {
+			        uni.showModal({
+			            content: "没有开启权限",
+			            confirmText: "设置",
+			            success: function(res) {
+			                if (res.confirm) {
+			                    permision.gotoAppSetting();
+			                }
+			            }
+			        })
+			    }
+			
+			    return status;
+			},
 			//显示优惠券面板
 			toggleMask(type){
 				let timer = type === 'show' ? 10 : 300;
@@ -176,7 +293,101 @@
 		background: $page-color-base;
 		padding-bottom: 100upx;
 	}
-
+	.uni-list {
+		background-color: #FFFFFF;
+		position: relative;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+	.uni-list-cell {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+	/* 上传 */
+	.uni-uploader {
+		flex: 1;
+		flex-direction: column;
+	}
+	.uni-uploader-head {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.uni-uploader-info {
+		color: #B2B2B2;
+	}
+	.uni-uploader-body {
+		margin-top: 16upx;
+	}
+	.uni-uploader__files {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+	.uni-uploader__file {
+		margin: 10upx;
+		width: 210upx;
+		height: 210upx;
+	}
+	.uni-uploader__img {
+		display: block;
+		width: 210upx;
+		height: 210upx;
+	}
+	.uni-uploader__input-box {
+		position: relative;
+		margin:10upx;
+		width: 208upx;
+		height: 208upx;
+		border: 2upx solid #D9D9D9;
+	}
+	.uni-uploader__input-box:before,
+	.uni-uploader__input-box:after {
+		content: " ";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+		background-color: #D9D9D9;
+	}
+	.uni-uploader__input-box:before {
+		width: 4upx;
+		height: 79upx;
+	}
+	.uni-uploader__input-box:after {
+		width: 79upx;
+		height: 4upx;
+	}
+	.uni-uploader__input-box:active {
+		border-color: #999999;
+	}
+	.uni-uploader__input-box:active:before,
+	.uni-uploader__input-box:active:after {
+		background-color: #999999;
+	}
+	.uni-uploader__input {
+		position: absolute;
+		z-index: 1;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+	}
+	
+	
+	
+	.list-pd {
+	    margin-top: 50upx;
+	}
+	.cell-pd {
+	    padding: 22upx 30upx;
+	}
 	.address-section {
 		padding: 30upx 0;
 		background: #fff;
@@ -382,7 +593,7 @@
 
 		&.desc-cell {
 			.cell-tit {
-				max-width: 90upx;
+				max-width: 110upx;
 			}
 		}
 
