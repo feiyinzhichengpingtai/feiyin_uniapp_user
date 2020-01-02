@@ -144,7 +144,7 @@
 						name: '卖家缺货'
 					},
 					{
-						value: 'other2',
+						value: 'other3',
 						name: '其他原因'
 					},
 					{
@@ -248,7 +248,7 @@
 			}, 
 			navToDetail(){
 				uni.navigateTo({
-					url: '/pages/order/detail?state=2'
+					url: '/pages/order/detail?state=1'
 				})
 			},
 			//swiper 切换
