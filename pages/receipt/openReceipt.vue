@@ -127,8 +127,10 @@
 		},
 		methods: {
 			...mapMutations(['login']),
-			ischange(){
-				console.log("ffff"+this.receipt.paperTitleType);
+			ischange(data){
+				//console.log("ffff"+JSON.stringify(data));
+				//this.receipt.paperType = this.list1[data.index];
+				this.receipt.paperType = data.newVal;
 			},
 			back(){
 				uni.navigateBack({
