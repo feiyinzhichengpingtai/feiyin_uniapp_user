@@ -19,13 +19,14 @@
 						maxlength="11"
 						data-key="mobile"
 						@input="inputChange"
+						@confirm="toLogin"
 					/>
 				</view>
 				<view class="input-item">
 					<text class="tit">密码</text>
 					<input 
 						type="mobile" 
-						value="" 
+						:value="password" 
 						placeholder="8-18位不含特殊字符的数字、字母组合"
 						placeholder-class="input-empty"
 						maxlength="20"
@@ -36,8 +37,8 @@
 					/>
 				</view>
 			</view>
-			<button class="confirm-btn" @click="" :disabled="logining">登录</button>
-			<view class="forget-section">
+			<button class="confirm-btn" @click="toLogin" :disabled="logining">登录</button>
+			<view class="forget-section" if-show="false">
 				忘记密码?
 			</view>
 			<view class="forget-section" @click="tologinquick">
@@ -55,9 +56,10 @@
 </template>
 
 <script>
-	import {  
-        mapMutations  
-    } from 'vuex';
+	import {
+	    mapMutations,
+		mapState
+	} from 'vuex';
 	
 	export default{
 		data(){
@@ -69,6 +71,9 @@
 		},
 		onLoad(){
 			
+		},
+		computed: {
+			...mapState(['hasLogin','userInfo'])
 		},
 		methods: {
 			...mapMutations(['login']),
@@ -91,31 +96,85 @@
 					url: '/pages/public/login_sms'
 				});
 			},
-			async toLogin(){
-				this.logining = true;
-				const {mobile, password} = this;
-				/* 数据验证模块
-				if(!this.$api.match({
+			async toLogin() {
+				logining = true;
+				this.showLoading();
+				console.log("toLogin");
+				const {
 					mobile,
 					password
-				})){
-					this.logining = false;
-					return;
+				} = this;
+				
+				console.log("mobile:"+mobile);
+				console.log("password:"+password);
+			
+				
+				//数据验证模块
+				// if(!this.$api.match({
+				// 	mobile,
+				// 	password
+				// })){
+				// 	this.logining = false;
+				// 	return;
+				// }
+			
+				const [err, res] = await uni.request({
+					url: this.$userCenter+"api/v1/members/login",
+					method: 'POST',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded',
+						'deviceNo': '121',
+						'channelNo': '2202',
+						'systemNo': '0657'
+					},
+					data: {
+						phone: mobile,
+						password: password
+					}
+				});
+				if (err) {
+					this.hideLoading();
+					console.log('request fail', err);
+					uni.showModal({
+						content: err.errMsg,
+						showCancel: false
+					});
+				} else {
+					this.hideLoading();
+					console.log('request success', res)
+					uni.showToast({
+						title: '请求成功',
+						icon: 'success',
+						mask: true,
+						duration: 2000
+					});
+					console.log(JSON.stringify(res))
 				}
-				*/
-				const sendData = {
-					mobile,
-					password
-				};
-				const result = await this.$api.json('userInfo');
-				if(result.status === 1){
-					this.login(result.data);
-                    uni.navigateBack();  
-				}else{
+				
+				if (res.data.returnCode == 200000) {
+					this.login(res.data.data);
+					uni.navigateBack();
+				} else {
 					this.$api.msg(result.msg);
 					this.logining = false;
 				}
-			}
+				
+			},
+			showLoading() {
+				uni.showLoading({
+					title: 'loading'
+				});
+			
+				// #ifdef MP-ALIPAY
+				this._showTimer && clearTimeout(this._showTimer);
+				this._showTimer = setTimeout(() => {
+					this.hideLoading();
+				}, 3000)
+				// #endif
+			},
+			hideLoading() {
+				uni.hideLoading();
+			},
 		},
 
 	}

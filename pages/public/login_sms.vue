@@ -37,7 +37,7 @@
 				</view>
 			</view>
 			<button class="confirm-btn" @click="toLogin" :disabled="logining">登录</button>
-			<view class="forget-section">
+			<view class="forget-section" @click="" v-show="false">
 				忘记密码?
 			</view>
 			<view class="forget-section" @click="toRegist">
@@ -66,10 +66,15 @@
 			}
 		},
 		onLoad(){
+			console.log(this.$userCenter);
+			console.log(this.$userCenter+"api/v1/members/login?mode=verificationCode");
 			
 		},
+		computed: {
+			...mapState(['hasLogin','userInfo'])
+		},
 		methods: {
-			...mapMutations(['login']),
+			...mapMutations(['login', 'logout']),
 			inputChange(e){
 				const key = e.currentTarget.dataset.key;
 				this[key] = e.detail.value;
@@ -84,7 +89,8 @@
 				});
 			},
 			async toLogin() {
-				//logining = true;
+				logining = true;
+				this.showLoading();
 				console.log("toLogin");
 				const {
 					mobile,
@@ -105,7 +111,7 @@
 				// }
 			
 				const [err, res] = await uni.request({
-					url: "http://10.141.53.7:8080/MemberCenter/api/v1/members/login?mode=verificationCode",
+					url: this.$userCenter+"api/v1/members/login?mode=verificationCode",
 					method: 'GET',
 					header: {
 						'content-type': 'application/x-www-form-urlencoded',
@@ -119,12 +125,14 @@
 					}
 				});
 				if (err) {
+					this.hideLoading();
 					console.log('request fail', err);
 					uni.showModal({
 						content: err.errMsg,
 						showCancel: false
 					});
 				} else {
+					this.hideLoading();
 					console.log('request success', res)
 					uni.showToast({
 						title: '请求成功',
@@ -134,7 +142,7 @@
 					});
 					console.log(JSON.stringify(res))
 				}
-			
+				
 				if (res.data.returnCode == 200000) {
 					this.login(res.data.data);
 					uni.navigateBack();
@@ -142,8 +150,23 @@
 					this.$api.msg(result.msg);
 					this.logining = false;
 				}
-			}
+			},
+			showLoading() {
+				uni.showLoading({
+					title: 'loading'
+				});
+				// #ifdef MP-ALIPAY
+				this._showTimer && clearTimeout(this._showTimer);
+				this._showTimer = setTimeout(() => {
+					this.hideLoading();
+				}, 3000)
+				// #endif
+			},
+			hideLoading() {
+				uni.hideLoading();
+			},
 		},
+		
 
 	}
 </script>
