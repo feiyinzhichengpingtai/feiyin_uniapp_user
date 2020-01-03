@@ -19,6 +19,10 @@
 			<text class="tit">详细地址：</text>
 			<input class="input" type="text" v-model="addressData.area" placeholder="请输入详细地址" placeholder-class="placeholder" />
 		</view>
+		<view class="row b-b">
+			<text class="tit">邮政编码：</text>
+			<input class="input" type="text" v-model="addressData.postalCode" placeholder="请输入邮政编码" placeholder-class="placeholder" />
+		</view>
 		
 		<view class="row default-row">
 			<text class="tit">设为默认地址：</text>
@@ -43,13 +47,16 @@
 
 <script>
 	import mpvueCityPicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue'
-		
+	import {
+		mapMutations,
+		mapState
+	} from 'vuex';
+	
 	export default {
 		components: {
 			mpvueCityPicker
 		},
 		data() {
-			let flag=0;
 			let tags = [{
 					id: 0,
 					name: '家',
@@ -79,6 +86,7 @@
 					mobile: '',
 					label: '请点击选择地址',
 					area: '',
+					postalCode:'',
 					defaule: false,
 					tag:''
 				}
@@ -125,7 +133,7 @@
 				}
 			},
 			switchChange(e){
-				this.addressData.default = e.detail;
+				this.addressData.defaule = e.target.value;
 			},
 			
 			//地图选择地址
@@ -162,7 +170,11 @@
 				}
 				console.log(data);
 				let user_info = this.userInfo;
-				
+				let label1=data.label.split("-");
+				console.log(label1[1]);
+				let province=label1[0];
+				let city=label1[1];
+				let region=label1[2];
 				//this.$api.prePage()获取上一页实例，可直接调用上页所有数据和方法，在App.vue定义
 				this.$api.prePage().refreshList(data, this.manageType);
 				this.$api.msg(`地址${this.manageType=='edit' ? '修改': '添加'}成功`);
@@ -172,6 +184,7 @@
 					mobile,
 					label,
 					area,
+					postalCode,
 					defaule,
 					tag,
 				} = this;
@@ -188,14 +201,13 @@
 						data: {
 							usrNo:user_info.a,
 							ctcPernNm:name,
-							ctcPernCtcTel:paperTitleType,
+							ctcPernCtcTel:mobile,
 							usrAddr:area,
 							addrLblCd:tag,
-							usrInvOpnAccBnkNm:bank,
-							usrInvOpnAccBnkNo:bankId,
-							usrInvEntpAddr:companyAddress,
-							usrInvEntpTel:companyMobile,
-							reciveEmail:reciveEmail,
+							province:province,
+							city:city,
+							region:region,
+							pstcd:postalCode,
 							dfltAddrNo: defaule,
 						}
 					});
