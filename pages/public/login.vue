@@ -97,7 +97,7 @@
 				});
 			},
 			async toLogin() {
-				logining = true;
+				this.logining = true;
 				this.showLoading();
 				console.log("toLogin");
 				const {

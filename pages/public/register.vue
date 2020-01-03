@@ -113,7 +113,7 @@
 				// }
 
 				const [err, res] = await uni.request({
-					url: this.$userCenter+"/api/v1/members/",
+					url: this.$userCenter+"api/v1/members/",
 					method: 'POST',
 					header: {
 						'content-type': 'application/x-www-form-urlencoded',
