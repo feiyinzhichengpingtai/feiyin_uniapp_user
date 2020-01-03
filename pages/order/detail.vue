@@ -4,9 +4,9 @@
 			<view class="navbar">
 				<text class="spec">{{text1}}</text>	
 			</view>
-			<view class="navbar">
+		<!-- 	<view class="navbar"> -->
 				<text class="spec">{{text2}}</text>
-			</view>
+			<!-- </view> -->
 		</view>
 		<!-- 地址 -->
 		<navigator url="/pages/address/address?source=1" class="address-section">
@@ -35,7 +35,7 @@
 		</view> -->
 
 		<swiper :current="tabCurrentIndex" class="swiper-box" duration="300" @change="changeTab">
-			<swiper-item class="tab-content" v-for="(tabItem,tabIndex) in navList" :key="tabIndex">
+			<swiper-item class="tab-content" v-for="(tabItem,tabIndex) in navList" :key="tabIndex" catchtouchmove="stopTouchMove">
 				<scroll-view 
 					class="list-scroll-content" 
 					scroll-y
@@ -345,11 +345,9 @@
 					navItem.loadingType = 'more';
 				}, 600);	
 			}, 
-			navToDetail(){
-				uni.navigateTo({
-					url: '/pages/order/orderDetail'
-				})
-			},
+			stopTouchMove:function(e){
+				return false;
+			} ,
 			//swiper 切换
 			changeTab(e){
 				this.tabCurrentIndex = e.target.current;

@@ -55,7 +55,7 @@
 						</view>
 						<view 
 							v-if="item.goodsList.length === 1" 
-							class="goods-box-single"
+							class="goods-box-single" @click="navToDetail"
 							v-for="(goodsItem, goodsIndex) in item.goodsList" :key="goodsIndex"
 						>
 							<image class="goods-img" :src="goodsItem.image" mode="aspectFill"></image>
@@ -248,7 +248,7 @@
 			}, 
 			navToDetail(){
 				uni.navigateTo({
-					url: '/pages/order/detail?state=1'
+					url: '/pages/order/detail?state=3'
 				})
 			},
 			//swiper 切换

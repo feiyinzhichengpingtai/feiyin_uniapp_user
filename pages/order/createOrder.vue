@@ -86,11 +86,11 @@
 				
 				<text class="cell-tit clamp">优惠券</text> -->
 				
-				<text class="cell-tit clamp" v-if="false">购买数量</text>
+				<text class="cell-tit clamp">购买数量</text>
 				<!-- <text class="cell-tip active">
 					选择优惠券
 				</text> -->
-				<uni-number-box v-if="false"
+				<uni-number-box class="cell-tip" :value="numberValue" @input="bindChange"
 				></uni-number-box>
 				<text class="cell-more wanjia wanjia-gengduo-d"></text>
 			</view>
@@ -209,6 +209,7 @@
 		},
 		data() {
 			return {
+				numberValue:1,
 				goodsList: [{
 					title:'古黛妃 短袖t恤女夏装2019新款',
 					price:'178',
@@ -313,6 +314,10 @@
 				setTimeout(()=>{
 					this.maskState1 = state;
 				}, timer)
+			},
+			bindChange(e){
+				console.log(e.detail.value)
+				this.numberValue = e.detail.value;
 			},
 			numberChange(data) {
 				this.number = data.number;
