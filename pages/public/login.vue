@@ -176,13 +176,20 @@
 				uni.hideLoading();
 			},
 			fakeLogin(){
-				this.login("{'a':'b','c':'d'}");
+				let u = {
+					a : "a",
+					b : "b",
+					c : 11
+				}
+				this.login(u);
 				uni.showToast({
 					title: '请求成功',
 					icon: 'success',
 					mask: true,
 					duration: 2000
 				});
+				console.log("user:"+this.userInfo);
+				console.log("user:"+this.userInfo.a);
 				uni.navigateBack();
 			}
 		},
