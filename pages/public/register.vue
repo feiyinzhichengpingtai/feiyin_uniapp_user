@@ -94,6 +94,7 @@
 			},
 			async toRegist() {
 				this.logining = true;
+				this.showLoading();
 				const {
 					mobile,
 					smsCode,
@@ -112,7 +113,7 @@
 				// }
 
 				const [err, res] = await uni.request({
-					url: "http://10.141.53.7:8080/MemberCenter/api/v1/members/",
+					url: this.$userCenter+"api/v1/members/",
 					method: 'POST',
 					header: {
 						'content-type': 'application/x-www-form-urlencoded',
@@ -128,19 +129,21 @@
 				});
 				if (err) {
 					console.log('request fail', err);
+					this.hideLoading();
 					uni.showModal({
 						content: err.errMsg,
 						showCancel: false
 					});
 				} else {
-					console.log('request success', res)
+					console.log('request success', res);
+					this.hideLoading();
 					uni.showToast({
 						title: '请求成功',
 						icon: 'success',
 						mask: true,
 						duration: 2000
 					});
-					console.log(JSON.stringify(res))
+					console.log(JSON.stringify(res));
 				}
 
 				if (res.data.returnCode == 200000) {
@@ -152,7 +155,22 @@
 					this.$api.msg(res.data.returnMessage);
 					this.logining = false;
 				}
-			}
+			},
+			showLoading() {
+				uni.showLoading({
+					title: 'loading'
+				});
+			
+				// #ifdef MP-ALIPAY
+				this._showTimer && clearTimeout(this._showTimer);
+				this._showTimer = setTimeout(() => {
+					this.hideLoading();
+				}, 3000)
+				// #endif
+			},
+			hideLoading() {
+				uni.hideLoading();
+			},
 		},
 		
 	}
