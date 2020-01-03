@@ -85,25 +85,24 @@
 					<image @click="navTo('/pages/product/product')" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553105443324&di=8141bf13f3f208c61524d67f9bb83942&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01ac9a5548d29b0000019ae98e6d98.jpg" mode="aspectFill"></image>
 					<image @click="navTo('/pages/product/product')" src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=191678693,2701202375&fm=26&gp=0.jpg" mode="aspectFill"></image>
 				</scroll-view> @eventClick="navTo('/pages/order/order?state=0')"-->
-				<list-cell icon="icon-iconfontweixin" iconColor="#e07472" title="我的订单" @eventClick="MyOrder()"></list-cell>
+				<list-cell icon="icon-iconfontweixin" iconColor="#e07472" title="我的订单" @eventClick="navTo('/pages/order/order?state=0')"></list-cell>
 				<list-cell icon="icon-dizhi" iconColor="#5fcda2" title="配送地址" @eventClick="navTo('/pages/address/address')"></list-cell>
 				<list-cell icon="icon-share" iconColor="#9789f7" title="通知" ></list-cell>
 				<list-cell icon="icon-pinglun-copy" iconColor="#ee883b" title="隐私" ></list-cell>
-				
 				<list-cell icon="icon-shezhi1" iconColor="#e07472" title="支付设置" border="" @eventClick="navTo('/pages/set/set')"></list-cell>
 			    <list-cell icon="icon-shoucang_xuanzhongzhuangtai" iconColor="#54b4ef" title="关于商城"></list-cell>
 			    <list-cell icon="icon-share" iconColor="#9789f7" title="问题反馈">
 				</list-cell>
 			</view>
-			<button class="confirm-btn" @click="toLogin" :disabled="logining" v-if="isshow">退出登录</button>
-		</view>
 			
-		
+			<button class="confirm-btn" @click="dologout" :disabled="logining" v-if="isshow">退出登录</button>
+		</view>
     </view>  
 </template>  
 <script>  
 	import listCell from '@/components/mix-list-cell';
-    import {  
+    import {
+		mapMutations,
         mapState 
     } from 'vuex';  
 	let startY = 0, moveY = 0, pageAtTop = true;
@@ -113,7 +112,7 @@
 		},
 		data(){
 			return {
-				isshow:true,
+				isshow:false,
 				login:'登录/',
 				register:'注册',
 				coverTransform: 'translateY(0px)',
@@ -123,13 +122,10 @@
 			}
 		},
 		onLoad(){
-	/* 		if(1){
-				this.login='用户名:'
-			}
-			if(1){
-				
-			}
-			 */
+	      this.islogin() ;
+		},
+		onShow(){
+			this.islogin() ;
 		},
 		// #ifndef MP
 		onNavigationBarButtonTap(e) {
@@ -156,25 +152,16 @@
 			...mapState(['hasLogin','userInfo'])
 		},
         methods: {
+		   ...mapMutations(['logout']),
 	       dologin(){
 			   if(this.login=="登录/"){
 				uni.navigateTo({
 					url: '/pages/public/login'
 				})
 			   }
-			  
+			   console.log("haslogin:"+this.haslogin);
 		    },
-			//我的订单
-			MyOrder(){
-				console.log(this.hasLogin)
-				if(this.hasLogin){
-					uni.navigateTo({
-						url: '/pages/order/order?state=0'
-					})
-				}else {
-						uni.showModal({title: "请登录!"});
-					}
-			},
+
 			doregister(){
 				if(this.register=="注册"){
 				 uni.navigateTo({
@@ -195,46 +182,33 @@
 					url
 				})  
 			}, 
-	
-			/**
-			 *  会员卡下拉和回弹
-			 *  1.关闭bounce避免ios端下拉冲突
-			 *  2.由于touchmove事件的缺陷（以前做小程序就遇到，比如20跳到40，h5反而好很多），下拉的时候会有掉帧的感觉
-			 *    transition设置0.1秒延迟，让css来过渡这段空窗期
-			 *  3.回弹效果可修改曲线值来调整效果，推荐一个好用的bezier生成工具 http://cubic-bezier.com/
-			 */
-			coverTouchstart(e){
-				if(pageAtTop === false){
-					return;
-				}
-				this.coverTransition = 'transform .1s linear';
-				startY = e.touches[0].clientY;
-			},
-			coverTouchmove(e){
-				moveY = e.touches[0].clientY;
-				let moveDistance = moveY - startY;
-				if(moveDistance < 0){
-					this.moving = false;
-					return;
-				}
-				this.moving = true;
-				if(moveDistance >= 80 && moveDistance < 100){
-					moveDistance = 80;
-				}
-		
-				if(moveDistance > 0 && moveDistance <= 80){
-					this.coverTransform = `translateY(${moveDistance}px)`;
+			//判断是否登录
+			islogin(){
+				if(this.hasLogin){
+					this.login='用户名:'
+					this.register=this.userInfo.a
+					this.isshow=true
+				}else{
+					this.login='登录/'
+					this.register='注册'
+					this.isshow=false
 				}
 			},
-			coverTouchend(){
-				if(this.moving === false){
-					return;
-				}
-				this.moving = false;
-				this.coverTransition = 'transform 0.3s cubic-bezier(.21,1.93,.53,.64)';
-				this.coverTransform = 'translateY(0px)';
-			}
-        }  
+			//退出登录
+			dologout(){
+		        uni.showModal({
+		        content: '确定要退出登录么',
+		        success: (e)=>{
+		    	   if(e.confirm){
+		    		this.logout();
+		    		setTimeout(()=>{
+		    			this.islogin();
+		    		}, 200)
+		    	}
+		    }
+		});
+		}
+     }  
     }  
 </script>  
 <style lang='scss'>
@@ -282,53 +256,6 @@
 			font-size: $font-lg + 6upx;
 			color: $font-color-dark;
 			margin-left: 20upx;
-		}
-	}
-
-	.vip-card-box{
-		display:flex;
-		flex-direction: column;
-		color: #f7d680;
-		height: 240upx;
-		background: linear-gradient(left, rgba(0,0,0,.7), rgba(0,0,0,.8));
-		border-radius: 16upx 16upx 0 0;
-		overflow: hidden;
-		position: relative;
-		padding: 20upx 24upx;
-		.card-bg{
-			position:absolute;
-			top: 20upx;
-			right: 0;
-			width: 380upx;
-			height: 260upx;
-		}
-		.b-btn{
-			position: absolute;
-			right: 20upx;
-			top: 16upx;
-			width: 132upx;
-			height: 40upx;
-			text-align: center;
-			line-height: 40upx;
-			font-size: 22upx;
-			color: #36343c;
-			border-radius: 20px;
-			background: linear-gradient(left, #f9e6af, #ffd465);
-			z-index: 1;
-		}
-		.tit{
-			font-size: $font-base+2upx;
-			color: #f7d680;
-			margin-bottom: 28upx;
-			.yticon{
-				color: #f6e5a3;
-				margin-right: 16upx;
-			}
-		}
-		.e-b{
-			font-size: $font-sm;
-			color: #d8cba9;
-			margin-top: 10upx;
 		}
 	}
 	.cover-container{
