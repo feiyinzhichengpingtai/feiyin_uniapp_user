@@ -1,10 +1,6 @@
 <template>
 	<view class="content">
 		<view class="navbar" :style="{position:headerPosition,top:headerTop}">
-			<!-- 标题栏和状态栏占位符 -->
-			<view class="titleNview-placing"></view>
-			<!-- 背景色区域 -->
-			<view class="titleNview-background" :style="{backgroundColor:titleNViewBackground}"></view>
 			<view class="nav-item" :class="{current: filterIndex === 0}" @click="tabClick(0)">
 				综合排序
 			</view>
@@ -35,7 +31,7 @@
 				</view>
 				<view class="border"></view>
 			</view>
-			<uni-load-more :status="loadingType"></uni-load-more>
+			<uni-load-more :status="loadingType" ></uni-load-more>
 		</view>
 		
 		<view class="cate-mask" :class="cateMaskState===0 ? 'none' : cateMaskState===1 ? 'show' : ''" @click="toggleCateMask">
@@ -225,6 +221,7 @@
 			navToDetailPage(item){
 				//测试数据没有写id，用title代替
 				let id = item.title;
+				console.log("id:"+id);
 				uni.navigateTo({
 					url: `/pages/product/product?id=${id}`
 				})

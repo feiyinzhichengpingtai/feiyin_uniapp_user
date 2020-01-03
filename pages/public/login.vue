@@ -38,7 +38,7 @@
 				</view>
 			</view>
 			<button class="confirm-btn" @click="toLogin" :disabled="logining">登录</button>
-			<view class="forget-section" if-show="false">
+			<view class="forget-section" v-show="false">
 				忘记密码?
 			</view>
 			<view class="forget-section" @click="tologinquick">
@@ -48,9 +48,9 @@
 				新用户注册
 			</view>
 		</view>
-		<view class="register-section">
+		<view class="register-section"  @click="fakeLogin">
 			登录即代表您已同意我们的
-			<text @click="toRegist">隐私政策条例</text>
+			<text>隐私政策条例</text>
 		</view>
 	</view>
 </template>
@@ -87,7 +87,7 @@
 			toRegist(){
 				this.$api.msg('去注册');
 				uni.navigateTo({
-					url: '/pages/public/login'
+					url: '/pages/public/register'
 				});
 			},
 			tologinquick(){
@@ -175,6 +175,16 @@
 			hideLoading() {
 				uni.hideLoading();
 			},
+			fakeLogin(){
+				this.login("{'a':'b','c':'d'}");
+				uni.showToast({
+					title: '请求成功',
+					icon: 'success',
+					mask: true,
+					duration: 2000
+				});
+				uni.navigateBack();
+			}
 		},
 
 	}
