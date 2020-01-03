@@ -5,9 +5,8 @@
 			<!-- <input class="input" type="text" v-model="addressData.name" placeholder="收货人姓名" placeholder-class="placeholder" /> -->
 			<xfl-select
 			class="input"
-			v-model="receipt.paperType"
 			:list="list"
-			:initValue="'电子发票'"
+			:initValue="receipt.paperType"
 			:showItemNum="2" 
 			:isCanInput="false"  
 			:placeholder = "'请选择发票类型'"
@@ -20,13 +19,12 @@
 			<text class="tit">抬头类型</text>
 			<xfl-select
 			class="input"
-			v-model="receipt.paperTitleType"
 			:list="list1"
-			:initValue="'个人或事业单位'"
+			:initValue="receipt.paperTitleType"
 			:showItemNum="2" 
 			:isCanInput="false"  
 			:placeholder = "'请选择抬头类型'"
-			@change="ischange"
+			@change="ischange1"
 			>
 			<!-- :style_Container="listBoxStyle" -->
 			</xfl-select>
@@ -63,7 +61,7 @@
 		</view>
 		<view class="row default-row">
 			<text class="tit">设为默认发票信息</text>
-			<switch :checked="receipt.defaule" color="#fa436a" @change="switchChange" />
+			<switch :checked="receipt.defaultt" color="#fa436a" @change="switchChange" />
 		</view>
 		<view class="uni-btn-v">
 			<button type="default" @click="back">本次不开具发票，继续下单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;></button>
@@ -105,32 +103,30 @@
 				}
 			}
 		},
-		/* onLoad(option){
-			let title = '开具发票';
-			if(option.type==='edit'){
-				title = '编辑收货地址'
-				
-				this.addressData = JSON.parse(option.data)
-			}
-			this.manageType = option.type;
-			uni.setNavigationBarTitle({
-				title
-			})
-		}, */
+		onLoad(){
+			this.receipt.paperType = '电子发票';
+			this.receipt.paperTitleType='个人或事业单位'
+		},
 		/* back() {
 			uni.navigateBack({
 				delta: 1
 			})
 		}, */
 		computed: {
-			...mapState(['hasLogin','userInfo'])
+			...mapState(['userInfo'])
 		},
 		methods: {
-			...mapMutations(['login']),
 			ischange(data){
 				//console.log("ffff"+JSON.stringify(data));
-				//this.receipt.paperType = this.list1[data.index];
+				//this.receipt.paperType = this.list[data.index];
 				this.receipt.paperType = data.newVal;
+				console.log(this.receipt.paperType);
+			},
+			ischange1(data){
+				//console.log("ffff"+JSON.stringify(data));
+				//this.receipt.paperType = this.list1[data.index];
+				this.receipt.paperTitleType = data.newVal;
+				console.log(this.receipt.paperTitleType);
 			},
 			back(){
 				uni.navigateBack({
@@ -138,12 +134,13 @@
 				})
 			},
 			switchChange(e){
-				this.addressData.default = e.detail;
+				this.receipt.defaultt = e.target.value;
+				console.log(e.target.value)
 			},
-			visibleChange(isShow){ 
+			/* visibleChange(isShow){ 
 				// 列表框的显示隐藏事件
 				console.log('isShow::', isShow);
-			},
+			}, */
 			//地图选择地址
 			/* chooseLocation(){
 				uni.chooseLocation({
@@ -157,6 +154,7 @@
 			//提交
 			async confirm(){
 				let data = this.receipt;
+				console.log(data);
 				if(!data.paperTitle){
 					this.$api.msg('请填写发票抬头');
 					return;
@@ -169,7 +167,6 @@
 					this.$api.msg('请填写接收邮箱');
 					return;
 				}
-				this.logining = true;
 				const {
 					paperType,
 					paperTitleType,
@@ -192,6 +189,7 @@
 						'stmNo': '0657'
 					},
 					data: {
+						userID:this.userInfo.a,
 						usrInvTpCd:paperType,
 						usrInvLkupTpCd:paperTitleType,
 						usrInvLkupNm:paperTitle,
@@ -224,8 +222,7 @@
 				/* this.$api.prePage().refreshList(data, this.manageType);
 				this.$api.msg(`地址${this.manageType=='edit' ? '修改': '添加'}成功`); */
 				if (res.data.returnCode == 200000) {
-					console.log("this.hasLogin:"+this.hasLogin);
-					console.log("this.userInfo:"+this.userInfo);
+					console.log("res.data:"+res.data.returnMessage);
 					uni.navigateBack();
 				} else {
 					this.$api.msg(res.data.returnMessage);
