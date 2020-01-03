@@ -51,7 +51,7 @@
 			</view>
 			<view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">手机号码</text>
-				<text class="cell-tip"></text>
+				<input class="desc" type="text" v-model="desc"/>
 			</view>
 			<!-- <view class="border"> -->
 			<view class="yt-list-cell desc-cell">
@@ -63,23 +63,21 @@
 				<text class="cell-tit clamp">上传凭证</text>
 				<text class="cell-tip disabled">最多可上传5张图片</text>
 			</view>
-			<view class="uni-list list-pd">
-				<view class="uni-list-cell cell-pd">
-					<view class="uni-uploader">
-						<view class="uni-uploader-head">
-							<view class="uni-uploader-title">点击可预览选好的图片</view>
-							<view class="uni-uploader-info">{{imageList.length}}/5</view>
-						</view>
-						<view class="uni-uploader-body">
-							<view class="uni-uploader__files">
-								<block v-for="(image,index) in imageList" :key="index">
-									<view class="uni-uploader__file">
-										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
-									</view>
-								</block>
-								<view class="uni-uploader__input-box">
-									<view class="uni-uploader__input" @tap="chooseImage"></view>
+			<view class="yt-list-cell b-b">
+				<view class="uni-uploader">
+					<view class="uni-uploader-head">
+						<view class="uni-uploader-title">点击可预览选好的图片</view>
+						<view class="uni-uploader-info">{{imageList.length}}/5</view>
+					</view>
+					<view class="uni-uploader-body">
+						<view class="uni-uploader__files">
+							<block v-for="(image,index) in imageList" :key="index">
+								<view class="uni-uploader__file">
+									<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
 								</view>
+							</block>
+							<view class="uni-uploader__input-box">
+								<view class="uni-uploader__input" @tap="chooseImage"></view>
 							</view>
 						</view>
 					</view>
@@ -87,30 +85,7 @@
 			</view>
 			
 		</view>
-
-		<!-- 优惠券面板 -->
-		<view class="mask" :class="maskState===0 ? 'none' : maskState===1 ? 'show' : ''" @click="toggleMask">
-			<view class="mask-content" @click.stop.prevent="stopPrevent">
-				<!-- 优惠券页面，仿mt -->
-				<view class="coupon-item" v-for="(item,index) in couponList" :key="index">
-					<view class="con">
-						<view class="left">
-							<text class="title">{{item.title}}</text>
-							<text class="time">有效期至2019-06-30</text>
-						</view>
-						<view class="right">
-							<text class="price">{{item.price}}</text>
-							<text>满30可用</text>
-						</view>
-						
-						<view class="circle l"></view>
-						<view class="circle r"></view>
-					</view>
-					<text class="tips">限新用户使用</text>
-				</view>
-			</view>
-		</view>
-
+		<button class="confirm-btn" @click="submit" :disabled="logining">提交</button>
 	</view>
 </template>
 
@@ -280,7 +255,7 @@
 			},
 			submit(){
 				uni.redirectTo({
-					url: '/pages/money/pay'
+					url: '/pages/order/detail'
 				})
 			},
 			stopPrevent(){}
@@ -293,19 +268,18 @@
 		background: $page-color-base;
 		padding-bottom: 100upx;
 	}
-	.uni-list {
-		background-color: #FFFFFF;
-		position: relative;
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-	}
-	.uni-list-cell {
-		position: relative;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
+	.confirm-btn{
+		width: 350upx;
+		height: 76upx;
+		line-height: 76upx;
+		border-radius: 50px;
+		margin-top: 70upx;
+		background: #0A98D5;
+		color: #fff;
+		font-size: $font-lg;
+		&:after{
+			border-radius: 100px;
+		}
 	}
 	/* 上传 */
 	.uni-uploader {
@@ -317,7 +291,11 @@
 		flex-direction: row;
 		justify-content: space-between;
 	}
+	.uni-uploader-title {
+		font-size: 26upx;
+	}
 	.uni-uploader-info {
+		font-size: 26upx;
 		color: #B2B2B2;
 	}
 	.uni-uploader-body {
