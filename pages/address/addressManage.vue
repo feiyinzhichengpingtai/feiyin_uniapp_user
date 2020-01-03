@@ -78,11 +78,8 @@
 					name: '',
 					mobile: '',
 					label: '请点击选择地址',
-					value:[],
-					cityCode:"",
-					address: '',
 					area: '',
-					default: false,
+					defaule: false,
 					tag:''
 				}
 			}
@@ -99,6 +96,9 @@
 				title
 			})
 		},
+		computed: {
+			...mapState(['userInfo'])
+		},
 		methods: {
 			toggle(index, item) {
 				this.tags[index].checked = !item.checked;
@@ -107,6 +107,7 @@
 						this.tags[i].checked=false;
 					}
 				}
+				this.addressData.tag=item.name;
 				this.reckon()
 			},
 			reckon() {
@@ -145,7 +146,7 @@
 				this.cityPickerValue = e.value;
 			},
 			//提交
-			confirm(){
+			async confirm(){
 				let data = this.addressData;
 				if(!data.name){
 					this.$api.msg('请填写收货人姓名');
@@ -155,18 +156,112 @@
 					this.$api.msg('请输入正确的手机号码');
 					return;
 				}
-				if(!data.address){
-					// this.$api.msg('请在地图选择所在位置');
+				if(!data.label){
+					this.$api.msg('请选择所在地区');
 					return;
 				}
-				if(!data.area){
-					this.$api.msg('请填写门牌号信息');
-					return;
-				}
+				console.log(data);
+				let user_info = this.userInfo;
 				
 				//this.$api.prePage()获取上一页实例，可直接调用上页所有数据和方法，在App.vue定义
 				this.$api.prePage().refreshList(data, this.manageType);
 				this.$api.msg(`地址${this.manageType=='edit' ? '修改': '添加'}成功`);
+				
+				const {
+					name,
+					mobile,
+					label,
+					area,
+					defaule,
+					tag,
+				} = this;
+				if(this.manageType=='edit'){
+					const [err, res] = await uni.request({
+						url: "http://10.141.53.7:8080/MemberCenter/api/v1/members/",
+						method: 'POST',
+						header: {
+							'content-type': 'application/x-www-form-urlencoded',
+							'dvcId': '',
+							'chnlTpCd': '2202',
+							'stmNo': '0657'
+						},
+						data: {
+							usrNo:user_info.a,
+							ctcPernNm:name,
+							ctcPernCtcTel:paperTitleType,
+							usrAddr:area,
+							addrLblCd:tag,
+							usrInvOpnAccBnkNm:bank,
+							usrInvOpnAccBnkNo:bankId,
+							usrInvEntpAddr:companyAddress,
+							usrInvEntpTel:companyMobile,
+							reciveEmail:reciveEmail,
+							dfltAddrNo: defaule,
+						}
+					});
+					if (err) {
+						console.log('request fail', err);
+						uni.showModal({
+							content: err.errMsg,
+							showCancel: false,
+						});
+					} else {
+						console.log('request success', res)
+						uni.showToast({
+							title: '请求成功',
+							icon: 'success',
+							mask: true,
+							duration: 2000
+						});
+						console.log(JSON.stringify(res))
+					}
+				}				
+				const [err, res] = await uni.request({
+					url: "http://10.141.53.7:8080/MemberCenter/api/v1/members/",
+					method: 'POST',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded',
+						'dvcId': '',
+						'chnlTpCd': '2202',
+						'stmNo': '0657'
+					},
+					data: {
+						userID:this.userInfo.a,
+						usrInvTpCd:paperType,
+						usrInvLkupTpCd:paperTitleType,
+						usrInvLkupNm:paperTitle,
+						usrInvTaxPayerNo:TaxPayerId,
+						usrInvOpnAccBnkNm:bank,
+						usrInvOpnAccBnkNo:bankId,
+						usrInvEntpAddr:companyAddress,
+						usrInvEntpTel:companyMobile,
+						reciveEmail:reciveEmail,
+						isDefault: defaultt,
+					}
+				});
+				if (err) {
+					console.log('request fail', err);
+					uni.showModal({
+						content: err.errMsg,
+						showCancel: false,
+					});
+				} else {
+					console.log('request success', res)
+					uni.showToast({
+						title: '请求成功',
+						icon: 'success',
+						mask: true,
+						duration: 2000
+					});
+					console.log(JSON.stringify(res))
+				}
+				if (res.data.returnCode == 200000) {
+					console.log("res.data:"+res.data.returnMessage);
+					uni.navigateBack();
+				} else {
+					this.$api.msg(res.data.returnMessage);
+				}
+				
 				setTimeout(()=>{
 					uni.navigateBack()
 				}, 800)
