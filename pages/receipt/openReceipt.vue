@@ -11,6 +11,7 @@
 			:showItemNum="2" 
 			:isCanInput="false"  
 			:placeholder = "'请选择发票类型'"
+			@change="ischange"
 			>
 			<!-- :style_Container="listBoxStyle" -->
 			</xfl-select>
@@ -25,6 +26,7 @@
 			:showItemNum="2" 
 			:isCanInput="false"  
 			:placeholder = "'请选择抬头类型'"
+			@change="ischange"
 			>
 			<!-- :style_Container="listBoxStyle" -->
 			</xfl-select>
@@ -32,28 +34,32 @@
 		</view>
 		<view class="row default-row">
 			<text class="tit">发票抬头</text>
-			<input class="input" type="text" v-model="receipt.paperTitle" placeholder="上海xxx公司" placeholder-class="placeholder" />
+			<input class="input" type="text" v-model="receipt.paperTitle" placeholder="必填" placeholder-class="placeholder"/>
 		</view>
-		<view class="row default-row"> 
+		<view class="row default-row" v-if="receipt.paperTitleType==='企业'"> 
 			<text class="tit">纳税人编号</text>
 			<input class="input" type="text" v-model="receipt.TaxPayerId" placeholder="4423422122Y" placeholder-class="placeholder" />
 		</view>
 		
-		<view class="row default-row">
+		<view class="row default-row" v-if="receipt.paperTitleType==='企业'">
 			<text class="tit">开户银行</text>
 			<input class="input" type="text" v-model="receipt.bank" placeholder="选填" placeholder-class="placeholder" />
 		</view>
-		<view class="row default-row">
+		<view class="row default-row" v-if="receipt.paperTitleType==='企业'">
 			<text class="tit">银行账号</text>
 			<input class="input" type="text" v-model="receipt.bankId" placeholder="选填" placeholder-class="placeholder" />
 		</view>
-		<view class="row default-row">
+		<view class="row default-row" v-if="receipt.paperTitleType==='企业'">
 			<text class="tit">企业地址</text>
 			<input class="input" type="text" v-model="receipt.companyAddress" placeholder="选填" placeholder-class="placeholder" />
 		</view>
-		<view class="row default-row">
+		<view class="row default-row" v-if="receipt.paperTitleType==='企业'">
 			<text class="tit">企业电话</text>
 			<input class="input" type="number" v-model="receipt.companyMobile" placeholder="选填" placeholder-class="placeholder" />
+		</view>
+		<view class="row default-row">
+			<text class="tit">接收邮箱</text>
+			<input class="input" type="text" v-model="receipt.reciveEmail" placeholder="必填" placeholder-class="placeholder" />
 		</view>
 		<view class="row default-row">
 			<text class="tit">设为默认发票信息</text>
@@ -68,6 +74,11 @@
 
 <script>
 	import xflSelect from 'components/xfl-select/xfl-select.vue';
+	import {
+		mapMutations,
+		mapState
+	} from 'vuex';
+	
 	export default {
 		data() {
 			return {
@@ -89,7 +100,8 @@
 					bankId: '',
 					companyAddress: '',
 					companyMobile:'',
-					default: false,
+					reciveEmail:'',
+					defaultt: false,
 				}
 			}
 		},
@@ -110,7 +122,16 @@
 				delta: 1
 			})
 		}, */
+		computed: {
+			...mapState(['hasLogin','userInfo'])
+		},
 		methods: {
+			...mapMutations(['login']),
+			ischange(data){
+				//console.log("ffff"+JSON.stringify(data));
+				//this.receipt.paperType = this.list1[data.index];
+				this.receipt.paperType = data.newVal;
+			},
 			back(){
 				uni.navigateBack({
 					delta: 1
@@ -134,7 +155,7 @@
 			}, */
 			
 			//提交
-			confirm(){
+			async confirm(){
 				let data = this.receipt;
 				if(!data.paperTitle){
 					this.$api.msg('请填写发票抬头');
@@ -144,13 +165,72 @@
 					this.$api.msg('请填写纳税人编号');
 					return;
 				}
-				
+				if(!data.reciveEmail){
+					this.$api.msg('请填写接收邮箱');
+					return;
+				}
+				this.logining = true;
+				const {
+					paperType,
+					paperTitleType,
+					paperTitle,
+					TaxPayerId,
+					bank,
+					bankId,
+					companyAddress,
+					companyMobile,
+					reciveEmail,
+					defaultt,
+				} = this;
+				const [err, res] = await uni.request({
+					url: "http://10.141.53.7:8080/MemberCenter/api/v1/members/",
+					method: 'POST',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded',
+						'dvcId': '',
+						'chnlTpCd': '2202',
+						'stmNo': '0657'
+					},
+					data: {
+						usrInvTpCd:paperType,
+						usrInvLkupTpCd:paperTitleType,
+						usrInvLkupNm:paperTitle,
+						usrInvTaxPayerNo:TaxPayerId,
+						usrInvOpnAccBnkNm:bank,
+						usrInvOpnAccBnkNo:bankId,
+						usrInvEntpAddr:companyAddress,
+						usrInvEntpTel:companyMobile,
+						reciveEmail:reciveEmail,
+						isDefault: defaultt,
+					}
+				});
+				if (err) {
+					console.log('request fail', err);
+					uni.showModal({
+						content: err.errMsg,
+						showCancel: false,
+					});
+				} else {
+					console.log('request success', res)
+					uni.showToast({
+						title: '请求成功',
+						icon: 'success',
+						mask: true,
+						duration: 2000
+					});
+					console.log(JSON.stringify(res))
+				}
 				//this.$api.prePage()获取上一页实例，可直接调用上页所有数据和方法，在App.vue定义
 				/* this.$api.prePage().refreshList(data, this.manageType);
 				this.$api.msg(`地址${this.manageType=='edit' ? '修改': '添加'}成功`); */
-				setTimeout(()=>{
-					uni.navigateBack()
-				}, 800)
+				if (res.data.returnCode == 200000) {
+					console.log("this.hasLogin:"+this.hasLogin);
+					console.log("this.userInfo:"+this.userInfo);
+					uni.navigateBack();
+				} else {
+					this.$api.msg(res.data.returnMessage);
+				}
+				
 			},
 		},
 		components: { xflSelect },

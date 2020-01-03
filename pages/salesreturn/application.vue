@@ -51,15 +51,16 @@
 			</view>
 			<view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">手机号码</text>
-				<input class="desc" type="text" v-model="desc"/>
+				<input class="cell-tip clamp" style="text-align: right;" type="text"/>
 			</view>
 			<!-- <view class="border"> -->
-			<view class="yt-list-cell desc-cell">
+			<view class="dces-area  b-b">
 				<text class="cell-tit clamp">退款说明</text>
-				<input class="desc" type="text" v-model="desc" placeholder="选填,最多200字" placeholder-style="text-align:right" />
+				<textarea class="desc" placeholder="选填,最多200字" auto-height></textarea>
+				
 			</view>
 			<!-- <view class="border"/> -->
-			<view class="yt-list-cell b-b">
+			<view class="yt-list-cell">
 				<text class="cell-tit clamp">上传凭证</text>
 				<text class="cell-tip disabled">最多可上传5张图片</text>
 			</view>
@@ -577,6 +578,36 @@
 
 		.desc {
 			flex: 1;
+			font-size: $font-base;
+			color: $font-color-dark;
+		}
+	}
+	
+	.dces-area {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		flex-direction: column;
+		padding: 10upx 30upx 10upx 40upx;
+		line-height: 70upx;
+		position: relative;
+	
+		&.cell-hover {
+			background: #fafafa;
+		}
+	
+		&.b-b:after {
+			left: 30upx;
+		}
+	
+		.cell-tit {
+			width: 100%;
+			font-size: 26upx;
+			color: $font-color-light;
+			margin-right: 10upx;
+		}
+		.desc {
+			width: 100%;
 			font-size: $font-base;
 			color: $font-color-dark;
 		}
