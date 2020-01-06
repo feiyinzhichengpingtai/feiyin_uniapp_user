@@ -19,21 +19,20 @@
 		<view class="goods-list">
 			<view style="width: 100%;" v-for="(item, index) in goodsList" :key="index" @click="navToDetailPage(item)">
 				<view class="g-item" >
-						<image :src="item.image"></image>
+						<image :src="item.spuCmdtyNo"></image>
 						<view class="right">
-							<text class="title clamp">{{item.title}}</text>
+							<text class="title clamp">{{item.spuCmdtyNm}}</text>
 							<text class="spec">春装款 L</text>
 							<view class="price-box">
-								<text class="price">{{item.price}}</text>
-								<text class="number">已售 {{item.sales}}</text>
+								<text class="price">{{item.spuCmdtyLowstPrc}}</text>
+								<text class="number">已售 {{item.monthSaleQty}}</text>
 							</view>
 						</view>
 				</view>
 				<view class="border"></view>
 			</view>
-			<uni-load-more :status="loadingType" ></uni-load-more>
 		</view>
-		
+		<uni-load-more :status="loadingType" ></uni-load-more>
 		<view class="cate-mask" :class="cateMaskState===0 ? 'none' : cateMaskState===1 ? 'show' : ''" @click="toggleCateMask">
 			<view class="cate-content" @click.stop.prevent="stopPrevent" @touchmove.stop.prevent="stopPrevent">
 				<view class="cate-title">筛选</view>
@@ -41,29 +40,27 @@
 				<view class="cat-content-center"> 
 					<view class="cat-content-center-price">
 						<view class="text" style="width: 200upx;">价格</view>
-						<view class="text" style="-webkit-flex: 1;flex: 1;display: flex;flex-direction: row;">
-							<input style="display: inline-block;" type="number" placeholder="数字" />
+						<view class="text" style="-webkit-flex: 1;flex: 1;display: flex;flex-direction: row; align-items: center;">
+							<input style="display: inline-block;" type="number" placeholder="低价"  v-model="bottom_price" placeholder-style="font-size: 26upx;"/>
 							&nbsp;&nbsp;-&nbsp;&nbsp;
-							<input style="display: inline-block;" type="number" placeholder="数字" />
+							<input style="display: inline-block;" type="number" placeholder="高价" v-model="top_price" placeholder-style="font-size: 26upx;">
 						</view>
 					</view>
 					<view class="cat-content-center-price">
 						<view class="text" style="width: 200upx;">地区</view>
-
-							<xfl-select
-							style="-webkit-flex: 1;flex: 1;"
+						<xfl-select
+							style="-webkit-flex: 1;flex: 1; font-size: 24upx; margin: 0 8upx;"
 							:list="list"
 							:initValue="'无'"
 							:showItemNum="2" 
 							:isCanInput="false"  
 							:placeholder = "'地区'"
-							@visible-change = 'visibleChange'>
-							</xfl-select>
-
+							@change="selectChange">
+						</xfl-select>
 					</view>
 					<view class="cat-content-center-button">
-						<button type="primary">确定</button>
-						<button type="default" plain="true">取消</button>
+						<button type="primary" @click="toggleCateMask()" style="width: 200upx;">确定</button>
+						<button type="default" plain="true" @click="toggleCateMask('clear')" style="width: 200upx;">清除</button>
 					</view>
 				</view>
 			</view>
@@ -86,8 +83,15 @@
 				headerPosition:"fixed",
 				headerTop:"0px",
 				loadingType: 'more', //加载更多状态
-				filterIndex: 0, 
 				cateId: 0, //已选三级分类id
+				keyword: '',
+				page: 0,
+				pageSize: 20,
+				orderBy: '',
+				region: '',
+				bottom_price: '',
+				top_price: '',
+				filterIndex: 0, 
 				priceOrder: 0, //1 价格从低到高 2价格从高到低
 				cateList: [],
 				goodsList: [],
@@ -103,7 +107,11 @@
 			this.headerTop = document.getElementsByTagName('uni-page-head')[0].offsetHeight+'px';
 			// #endif
 			this.cateId = options.tid;
-			this.loadCateList(options.fid,options.sid);
+			this.keyword = "iphone";
+			this.page = 1;
+			this.pageSize = 10;
+			this.total = 0;  // 总商品数
+			this.pages = 0; // 总页数
 			this.loadData();
 		},
 		onPageScroll(e){
@@ -120,20 +128,10 @@
 		},
 		//加载更多
 		onReachBottom(){
+			console.log("onReachBottom");
 			this.loadData();
 		},
 		methods: {
-			//加载分类
-			async loadCateList(fid, sid){
-				let list = await this.$api.json('cateList');
-				let cateList = list.filter(item=>item.pid == fid);
-				
-				cateList.forEach(item=>{
-					let tempList = list.filter(val=>val.pid == item.id);
-					item.child = tempList;
-				})
-				this.cateList = cateList;
-			},
 			//加载商品 ，带下拉刷新和上滑加载
 			async loadData(type='add', loading) {
 				//没有更多直接返回
@@ -146,33 +144,87 @@
 					this.loadingType = 'more'
 				}
 				
-				let goodsList = await this.$api.json('goodsList');
+				//let goodsList = await this.$api.json('goodsList');
 				if(type === 'refresh'){
 					this.goodsList = [];
 				}
-				//筛选，测试数据直接前端筛选了
+				
+				//网络请求开始
+				this.showLoading();
+				console.log("sales list");
+
+				const bottom_price = this.bottom_price;
+				const top_price = this.top_price;
+				const region = this.region;
+				let order = ""
 				if(this.filterIndex === 1){
-					goodsList.sort((a,b)=>b.sales - a.sales)
+					order = "monthSaleQty desc" ;
+				}else if(this.filterIndex === 2){
+					order = this.priceOrder === 1 ? 'priceOrder asc' : 'priceOrder desc';
+				}else{
+					order = "";
 				}
-				if(this.filterIndex === 2){
-					goodsList.sort((a,b)=>{
-						if(this.priceOrder == 1){
-							return a.price - b.price;
-						}
-						return b.price - a.price;
-					})
-				}
+				const orderBy = order;
+				const keyword = this.keyword;
+				const page = this.page;
 				
-				this.goodsList = this.goodsList.concat(goodsList);
-				
-				//判断是否还有下一页，有是more  没有是nomore(测试数据判断大于20就没有了)
-				this.loadingType  = this.goodsList.length > 20 ? 'nomore' : 'more';
-				if(type === 'refresh'){
-					if(loading == 1){
-						uni.hideLoading()
-					}else{
-						uni.stopPullDownRefresh();
+				const [err, res] = await uni.request({
+					url: this.$userCenter+"api/v1/goods/goodsList",
+					method: 'GET',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded',
+						'deviceNo': '121',
+						'channelNo': '2202',
+						'systemNo': '0657'
+					},
+					data: {
+						keyword: keyword,
+						orderBy: orderBy,
+						region: region,
+						top_price: top_price,
+						bottom_price: bottom_price,
+						page: page,
+						pageSize: this.pageSize
 					}
+				});
+				if (err) {
+					this.hideLoading();
+					console.log('request fail', err);
+					uni.showModal({
+						content: err.errMsg,
+						showCancel: false
+					});
+				} else {
+					this.hideLoading();
+					console.log('request success', res)
+					uni.showToast({
+						title: '请求成功',
+						icon: 'success',
+						mask: true,
+						duration: 2000
+					});
+					console.log(JSON.stringify(res))
+				}
+				
+				if (res.data.returnCode == 200000) {
+					let data = res.data;
+					this.goodsList = this.goodsList.concat(data.list);
+					this.page = this.page;
+					this.total = res.data.total;
+					this.pages = res.data.pages;
+					//判断是否还有下一页，有是more  没有是nomore(测试数据判断大于20就没有了)
+					this.loadingType  = this.pages === page ? 'nomore' : 'more';
+					if(type === 'refresh'){
+						if(loading == 1){
+							uni.hideLoading();
+						}else{
+							uni.stopPullDownRefresh();
+						}
+					}
+					
+				} else {
+					this.$api.msg(result.msg);
+					this.logining = false;
 				}
 			},
 			//筛选点击
@@ -184,7 +236,7 @@
 				if(index === 2){
 					this.priceOrder = this.priceOrder === 1 ? 2: 1;
 				}else{
-					this.priceOrder = 0;
+					this.priceOrder = 0; //不按照价格排序
 				}
 				uni.pageScrollTo({
 					duration: 300,
@@ -200,23 +252,18 @@
 				let timer = type === 'show' ? 10 : 300;
 				let	state = type === 'show' ? 1 : 0;
 				this.cateMaskState = 2;
+				
+				if(type === 'clear'){
+					this.region = '';
+					this.bottom_price = '';
+					this.top_price = '';
+				}
+				
 				setTimeout(()=>{
 					this.cateMaskState = state;
 				}, timer)
 			},
-			//分类点击
-			changeCate(item){
-				this.cateId = item.id;
-				this.toggleCateMask();
-				uni.pageScrollTo({
-					duration: 300,
-					scrollTop: 0
-				})
-				this.loadData('refresh', 1);
-				uni.showLoading({
-					title: '正在加载'
-				})
-			},
+			
 			//详情
 			navToDetailPage(item){
 				//测试数据没有写id，用title代替
@@ -229,7 +276,25 @@
 			stopPrevent(){},
 			visibleChange(isShow){
 				console.log("isShow:"+isShow);
-			}
+			},
+			selectChange(data){
+				this.region = data.newVal;
+			},
+			showLoading() {
+				uni.showLoading({
+					title: 'loading'
+				});
+			
+				// #ifdef MP-ALIPAY
+				this._showTimer && clearTimeout(this._showTimer);
+				this._showTimer = setTimeout(() => {
+					this.hideLoading();
+				}, 3000)
+				// #endif
+			},
+			hideLoading() {
+				uni.hideLoading();
+			},
 		},
 	}
 </script>
@@ -345,7 +410,7 @@
 		justify-content: center;
 		.cate-content{
 			width: 630upx;
-			height: 30%;
+			height: 40%;
 			background: #fff;
 			display: flex;
 			flex-direction: column;
@@ -353,9 +418,10 @@
 			transition: .3s;
 			.cate-title{
 				display: flex;
-				padding: 20upx 30upx;
-				font-size: 35upx;
+				padding: 30upx 30upx;
+				font-size: 40upx;
 				font-weight: bold ;
+				margin-left: 20upx;
 			}
 			.cat-content-center{
 				display: flex;
@@ -364,6 +430,9 @@
 			.cat-content-center-price{
 				display: flex;
 				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				margin: 0 20upx;
 			}
 			.cat-content-center-button{
 				display: flex;
