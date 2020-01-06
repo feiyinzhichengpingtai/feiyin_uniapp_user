@@ -3,13 +3,13 @@
 		<view class="list b-b" v-for="(item, index) in addressList" :key="index" @click="checkAddress(item)">
 			<view class="wrapper">
 				<view class="address-box">
-					<text class="tagg">{{item.tag}}</text>
-					<text class="address">{{item.addressName}} {{item.area}}</text>
-					<text v-if="item.default" class="tag">默认</text>
+					<text class="tagg">{{item.addrLblCd}}</text>
+					<text class="address">{{province}}{{city}}{{region}}{{street}}{{item.usrAddr}}</text>
+					<text v-if="item.dfltAddrNo=='0'" class="tag">默认</text>
 				</view>
 				<view class="u-box">
-					<text class="name">{{item.name}}</text>
-					<text class="mobile">{{item.mobile}}</text>
+					<text class="name">{{item.ctcPernNm}}</text>
+					<text class="mobile">{{item.ctcPernCtcTel}}</text>
 				</view>
 			</view>
 			<text class="yticon icon-bianji" @click.stop="addAddress('edit', item)"></text>
@@ -20,27 +20,39 @@
 </template>
 
 <script>
+	import {
+		mapMutations,
+		mapState
+	} from 'vuex';
 	export default {
 		data() {
 			return {
 				source: 0,
 				addressList: [
 					{
-						name: '刘晓晓',
-						mobile: '18666666666',
-						addressName: '贵族皇仕牛排(东城店)',
-						address: '北京市东城区',
-						area: 'B区',
-						default: true,
-						tag:'家',
+						usrAddrNo:'',
+						ctcPernNm: '刘晓晓',
+						ctcPernCtcTel: '18666666666',
+						province:'',
+						city:'',
+						region:'',
+						street:'',
+						usrAddr: '北京市东城区',
+						pstcd:'',
+						dfltAddrNo: '0',
+						addrLblCd:'家',
 					},{
-						name: '刘大大',
-						mobile: '18667766666',
-						addressName: '龙回1区12号楼',
-						address: '山东省济南市历城区',
-						area: '西单元302',
-						default: false,
-						tag:'公司',
+						usrAddrNo:'',
+						ctcPernNm: '刘大大',
+						ctcPernCtcTel: '18667766666',
+						province:'',
+						city:'',
+						region:'',
+						street:'',
+						usrAddr: '山东省济南市历城区',
+						pstcd:'',
+						dfltAddrNo: '1',
+						addrLblCd:'公司',
 					}
 				]
 			}
@@ -48,8 +60,32 @@
 		onLoad(option){
 			console.log(option.source);
 			this.source = option.source;
+			this.requestData();
+		},
+		computed: {
+			...mapState(['userInfo'])
 		},
 		methods: {
+			requestData(){
+				uni.request({
+					url: this.$userCenter+"api/v1/address/select",
+					method: 'GET',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded',
+						'dvcId': '',
+						'chnlTpCd': '2202',
+						'stmNo': '0657'
+					},
+					data: {
+						userID:this.userInfo.a
+					},
+					success: (res) => {
+					        console.log(res.data);
+							this.addressList=res.data;
+					        this.text = 'request success';
+					    }
+				});
+			},
 			//选择地址
 			checkAddress(item){
 				if(this.source == 1){
@@ -63,19 +99,13 @@
 					url: `/pages/address/addressManage?type=${type}&data=${JSON.stringify(item)}`
 				})
 			},
-			//修改地址
-			/* alterAddress(type, item){
-				uni.navigateTo({
-					url: '/pages/address/addressAlter'
-				})
-			}, */
 			//添加或修改成功之后回调
-			refreshList(data, type){
+			/* refreshList(data, type){
 				//添加或修改后事件，这里直接在最前面添加了一条数据，实际应用中直接刷新地址列表即可
 				this.addressList.unshift(data);
 				
 				console.log(data, type);
-			}
+			} */
 		}
 	}
 </script>
