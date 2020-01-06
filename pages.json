@@ -1,6 +1,51 @@
 {
 	"pages": [
-
+		
+		
+		{
+			"path": "pages/index/indexshow",
+			"style": {
+				// #ifdef MP 
+				"navigationBarTitleText": "商城",
+				//"navigationStyle": "custom",
+				// #endif 
+				"app-plus": {
+					"titleNView": {
+						"searchInput": {
+							"backgroundColor": "rgba(231, 231, 231,.7)",
+							"borderRadius": "16px",
+							"placeholder": "请输入地址 如：大钟寺",
+							"disabled": true,
+							"placeholderColor": "#606266"
+						},
+						"buttons": [{
+								"fontSrc": "/static/yticon.ttf",
+								"text": "\ue60d",
+								"fontSize": "26",
+								"color": "#303133",
+								"float": "left",
+								"background": "rgba(0,0,0,0)"
+							},
+							{
+								"fontSrc": "/static/yticon.ttf",
+								"text": "\ue744",
+								"fontSize": "27",
+								"color": "#303133",
+								"background": "rgba(0,0,0,0)",
+								"redDot": true
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+		    "path" : "pages/search/list",
+		    "style": {
+				"enablePullDownRefresh": true,
+		    	"navigationBarTitleText": "商品"
+		    }
+		},
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -176,7 +221,56 @@
 				"enablePullDownRefresh": true,
 				"navigationBarTitleText": "商品列表"
 			}
-        }
+        },
+		{
+		    "path" : "pages/salesreturn/application",
+		    "style" : {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+		    "path" : "pages/salesreturn/salesreturndetail",
+		    "style" : {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+		    "path" : "pages/receipt/openReceipt",
+		    "style" : {
+				"navigationBarTitleText": "开具发票"
+			}
+		},
+		{
+		    "path" : "pages/address/addressAlter",
+		    "style" : {
+				"navigationBarTitleText": "修改地址"
+			}
+		},
+		{
+		    "path" : "pages/order/detail",
+		    "style" : {
+				"navigationBarTitleText": "订单详情"
+			}
+		},
+		{
+		    "path" : "pages/public/register",
+		    "style" : {
+				"navigationStyle":"custom"
+			}
+		},
+		{
+		    "path" : "pages/public/login_sms",
+		    "style" : {
+				"navigationStyle":"custom"
+			}
+		},
+		{
+		    "path" : "pages/logistics/logistics",
+		    "style" : {
+				"navigationStyle":"custom"
+			}
+		}
+		
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -190,7 +284,7 @@
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
-				"pagePath": "pages/index/index",
+				"pagePath": "pages/index/indexshow",
 				"iconPath": "static/tab-home.png",
 				"selectedIconPath": "static/tab-home-current.png",
 				"text": "首页"
