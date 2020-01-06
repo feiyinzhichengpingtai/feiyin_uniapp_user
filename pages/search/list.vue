@@ -207,7 +207,7 @@
 				}
 				
 				if (res.data.returnCode == 200000) {
-					let data = res.data;
+					let data = res.data.data;
 					this.goodsList = this.goodsList.concat(data.list);
 					this.page = this.page;
 					this.total = res.data.total;
@@ -221,7 +221,6 @@
 							uni.stopPullDownRefresh();
 						}
 					}
-					
 				} else {
 					this.$api.msg(result.msg);
 					this.logining = false;

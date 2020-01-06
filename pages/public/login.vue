@@ -70,7 +70,7 @@
 			}
 		},
 		onLoad(){
-			
+			console.log("login onload");
 		},
 		computed: {
 			...mapState(['hasLogin','userInfo'])

@@ -38,7 +38,7 @@
 				<text class="cell-tip disabled">1件</text>
 			</view>
 		</view>
-		<view style="font-size: .3em;">最多可退10件，每件可退￥23.8</view>
+		<view style="font-size: .4em; margin:10upx 40upx;">最多可退10件，每件可退￥23.8</view>
 		<!-- 金额明细 -->
 		<view class="yt-list" >
 			<view class="yt-list-cell b-b">
@@ -86,7 +86,7 @@
 			</view>
 			
 		</view>
-		<button class="confirm-btn" @click="submit" :disabled="logining">提交</button>
+		<button class="confirm-btn" @click="applicationReturnGoods" :disabled="logining">提交</button>
 	</view>
 </template>
 
@@ -119,14 +119,10 @@
 				maskState: 0, //优惠券面板显示状态
 				desc: '', //备注
 				payType: 1, //1微信 2支付宝
-				addressData: {
-					name: '许小星',
-					mobile: '13853989563',
-					addressName: '金九大道',
-					address: '山东省济南市历城区',
-					area: '149号',
-					default: false,
-				}
+				returnGoods: {},
+				usrPrnOrderNo: '',
+				productSku: '',
+				logining: true
 			}
 		},
 		onUnload() {
@@ -138,10 +134,10 @@
 			this.countIndex = 4;
 		},
 		onLoad(option){
-			
-			//商品数据
-			//let data = JSON.parse(option.data);
-			//console.log(data);
+			//获取商品详情
+			this.getReturnGoodsInfo();
+			this.usrPrnOrderNo = '002';
+			this.productSku = '002';
 		},
 		methods: {
 			bindPickerChange: function(e) {
@@ -259,7 +255,134 @@
 					url: '/pages/order/detail'
 				})
 			},
-			stopPrevent(){}
+			stopPrevent(){},
+			async getReturnGoodsInfo() {
+				this.logining = true;
+				this.showLoading();
+				console.log("getReturnGoodsInfo");
+				
+				const usrPrnOrderNo = '002';
+				const productSku = '002';
+				
+				// console.log("mobile:"+mobile);
+				// console.log("password:"+password);
+			
+				const [err, res] = await uni.request({
+					url: this.$userCenter+"api/v1/order/returnGoodsInfo",
+					method: 'GET',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded',
+					},
+					data: {
+						usrPrnOrderNo: usrPrnOrderNo,
+						productSku: productSku
+					}
+				});
+				if (err) {
+					this.hideLoading();
+					console.log('request fail', err);
+					uni.showModal({
+						content: err.errMsg,
+						showCancel: false
+					});
+				} else {
+					this.hideLoading();
+					console.log('request success', res)
+					uni.showToast({
+						title: '请求成功',
+						icon: 'success',
+						mask: true,
+						duration: 2000
+					});
+					console.log(JSON.stringify(res))
+				}
+				
+				if (res.data.returnCode == 200000) {
+					this.returnGoods = res.data;
+				} else {
+					this.$api.msg(result.msg);
+					this.logining = false;
+				}
+			},
+			async applicationReturnGoods() {
+				this.logining = true;
+				this.showLoading();
+				console.log("applicationReturnGoods");
+				
+				const usrNo = '12040549';
+				const usrPrnOrderNo = returnGoods.usrPrnOrderNo;
+				const productSku = returnGoods.productSku;
+				const returningQuantity = returnGoods.returningQuantity;
+				const returningFreight = returnGoods.freight;
+				const returningAmount = returnGoods.productAmount;
+				const retRsn = '没有原因';
+				const returningRemark = '没有原因';
+				const usrPhone = '13150029323';
+				const usrRetVchr = '';
+				
+				// console.log("mobile:"+mobile);
+				// console.log("password:"+password);
+			
+				const [err, res] = await uni.request({
+					url: this.$userCenter+"api/v1/order/uiUsrRet",
+					method: 'POST',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded',
+					},
+					data: {
+						usrNo: usrNo,
+						usrPrnOrderNo: usrPrnOrderNo,
+						productSku: productSku,
+						returningQuantity: returningQuantity,
+						returningFreight: returningFreight,
+						returningAmount: returningAmount,
+						retRsn: retRsn,
+						returningRemark: returningRemark,
+						usrPhone: usrPhone,
+						usrRetVchr: usrRetVchr
+					}
+				});
+				if (err) {
+					this.hideLoading();
+					console.log('request fail', err);
+					uni.showModal({
+						content: err.errMsg,
+						showCancel: false
+					});
+				} else {
+					this.hideLoading();
+					console.log('request success', res)
+					uni.showToast({
+						title: '请求成功',
+						icon: 'success',
+						mask: true,
+						duration: 2000
+					});
+					console.log(JSON.stringify(res))
+				}
+				
+				if (res.data.returnCode == 200000) {
+					this.returnGoods = res.data;
+				} else {
+					this.$api.msg(result.msg);
+					this.logining = false;
+				}
+			},
+			showLoading() {
+				uni.showLoading({
+					title: 'loading'
+				});
+			
+				// #ifdef MP-ALIPAY
+				this._showTimer && clearTimeout(this._showTimer);
+				this._showTimer = setTimeout(() => {
+					this.hideLoading();
+				}, 3000)
+				// #endif
+			},
+			hideLoading() {
+				uni.hideLoading();
+			},
 		}
 	}
 </script>
