@@ -46,6 +46,10 @@ Vue.prototype.$fire = new Vue();
 Vue.prototype.$store = store;
 Vue.prototype.$api = {msg, json, prePage};
 
+const userCenter = "http://10.141.53.7:8080/MemberCenter/";
+
+Vue.prototype.$userCenter = userCenter;
+
 App.mpType = 'app'
 
 const app = new Vue({
